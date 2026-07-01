@@ -1,0 +1,3479 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BODYMIND · Painel de Gestão</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;1,200;1,300&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0807;
+  --surface: #14110d;
+  --surface-2: #1c1813;
+  --surface-3: #241f18;
+  --border: rgba(245,210,150,0.09);
+  --border-strong: rgba(245,210,150,0.16);
+  --text: #f7f3ec;
+  --text-dim: #a8a098;
+  --text-faint: #6b635a;
+  --accent: #F5C400;
+  --accent-soft: rgba(245,196,0,0.10);
+  --accent-line: rgba(245,196,0,0.38);
+  --ok: #5BD89E;
+  --ok-soft: rgba(91,216,158,0.12);
+  --warn: #E8B53A;
+  --warn-soft: rgba(232,181,58,0.12);
+  --alert: #E5532B;
+  --alert-soft: rgba(229,83,43,0.12);
+  --radius: 18px;
+  --radius-sm: 12px;
+  --ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --sidebar-w: 232px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  -webkit-font-smoothing: antialiased;
+  height: 100%;
+  overflow: hidden;
+}
+
+::selection { background: var(--accent); color: #000; }
+
+button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+input, select, textarea { font-family: inherit; }
+
+.mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+.app {
+  display: grid;
+  grid-template-columns: var(--sidebar-w) 1fr;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* ============ SIDEBAR ============ */
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  position: relative;
+  z-index: 20;
+}
+
+.sb-brand {
+  padding: 22px 22px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sb-logo-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  flex-shrink: 0;
+  box-shadow: 0 0 12px rgba(245,196,0,0.5);
+}
+
+.sb-brand-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--text);
+}
+
+.sb-brand-sub {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.18em;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.sb-nav {
+  flex: 1;
+  padding: 14px 12px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sb-section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  padding: 14px 12px 6px;
+}
+
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  color: var(--text-dim);
+  transition: background 180ms var(--ease), color 180ms var(--ease);
+  position: relative;
+  width: 100%;
+  text-align: left;
+  font-size: 13.5px;
+  font-weight: 400;
+}
+
+.sb-item:hover {
+  background: rgba(255,255,255,0.03);
+  color: var(--text);
+}
+
+.sb-item.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.sb-item.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 18px;
+  background: var(--accent);
+  border-radius: 0 2px 2px 0;
+}
+
+.sb-item svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  stroke-width: 1.5;
+}
+
+.sb-item-badge {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  background: var(--alert);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: 500;
+}
+
+.sb-footer {
+  padding: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.sb-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px;
+  border-radius: var(--radius-sm);
+}
+
+.sb-user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2a2a2a, #1a1a1a);
+  border: 1px solid var(--border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.sb-user-info { display: flex; flex-direction: column; min-width: 0; }
+.sb-user-name { font-size: 12.5px; color: var(--text); font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sb-user-role { font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: var(--text-faint); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ============ MAIN AREA ============ */
+.main {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--bg);
+  position: relative;
+}
+
+/* Glow âmbar ambiental — calor sutil vindo do topo, sem competir com conteúdo */
+.main::before {
+  content: '';
+  position: absolute;
+  top: -200px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 900px;
+  height: 500px;
+  background: radial-gradient(ellipse at center, rgba(245,196,0,0.06) 0%, rgba(245,140,40,0.025) 35%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.topbar, .content { position: relative; z-index: 1; }
+
+.topbar {
+  height: 64px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 28px;
+  flex-shrink: 0;
+}
+
+.topbar-left { display: flex; flex-direction: column; gap: 2px; }
+.topbar-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--text-faint); }
+.topbar-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 300; font-size: 20px; color: var(--text); letter-spacing: -0.01em; }
+
+.topbar-right { display: flex; align-items: center; gap: 12px; }
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 16px;
+  width: 260px;
+  transition: border-color 180ms var(--ease);
+}
+
+.search-box:focus-within { border-color: var(--accent-line); }
+.search-box svg { width: 15px; height: 15px; color: var(--text-faint); flex-shrink: 0; }
+.search-box input {
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-size: 13px;
+  width: 100%;
+}
+.search-box input::placeholder { color: var(--text-faint); }
+.search-kbd {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  color: var(--text-faint);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 5px;
+  flex-shrink: 0;
+}
+
+.topbar-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-dim);
+  transition: all 180ms var(--ease);
+  position: relative;
+}
+.topbar-btn:hover { border-color: var(--accent-line); color: var(--text); }
+.topbar-btn svg { width: 17px; height: 17px; stroke-width: 1.5; }
+.topbar-btn .dot {
+  position: absolute;
+  top: 8px;
+  right: 9px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--alert);
+  border: 2px solid var(--surface);
+}
+
+.cta-primary {
+  background: var(--accent);
+  color: #000;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  transition: all 180ms var(--ease);
+  white-space: nowrap;
+}
+.cta-primary:hover { transform: translateY(-1px); box-shadow: 0 8px 22px rgba(245,196,0,0.25); }
+.cta-primary svg { width: 15px; height: 15px; stroke-width: 2; }
+
+/* ============ CONTENT SCROLL AREA ============ */
+.content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 28px;
+}
+
+.view { display: none; animation: viewIn 360ms var(--ease); }
+.view.active { display: block; }
+
+@keyframes viewIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   DASHBOARD CALMO — busca protagonista
+   ============================================================ */
+
+.hero-search {
+  max-width: 680px;
+  margin: 24px auto 28px;
+  text-align: center;
+}
+
+.hs-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 14px;
+}
+
+.hs-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+  padding: 18px 22px;
+  transition: border-color 200ms var(--ease), box-shadow 200ms var(--ease);
+}
+
+.hs-box:focus-within {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-soft), 0 12px 40px rgba(245,196,0,0.10);
+}
+
+.hs-box svg { width: 22px; height: 22px; color: var(--text-faint); flex-shrink: 0; }
+
+.hs-box input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 300;
+  font-size: 20px;
+  letter-spacing: -0.01em;
+}
+.hs-box input::placeholder { color: var(--text-faint); font-weight: 300; }
+
+.hs-results {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  text-align: left;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 280ms var(--ease);
+}
+.hs-results.show { max-height: 340px; overflow-y: auto; }
+
+.hs-result {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background 160ms var(--ease);
+  border: 1px solid transparent;
+}
+.hs-result:hover { background: var(--surface-2); border-color: var(--border); }
+
+.hs-quick {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+.hsq-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.hsq-chip {
+  font-size: 12px;
+  color: var(--text-dim);
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  transition: all 160ms var(--ease);
+}
+.hsq-chip:hover { border-color: var(--accent-line); color: var(--text); }
+
+/* Money strip */
+.money-strip {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px 24px;
+  margin-bottom: 14px;
+}
+.ms-item { display: flex; flex-direction: column; gap: 6px; }
+.ms-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+.ms-value {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 200;
+  font-size: 34px;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--text);
+}
+.ms-unit { font-size: 16px; color: var(--text-dim); margin-right: 3px; font-weight: 300; }
+.ms-num-accent { color: var(--accent); }
+.ms-value.alert { color: var(--alert); }
+.ms-divider { width: 1px; height: 38px; background: var(--border); }
+.ms-link {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: color 180ms var(--ease);
+}
+.ms-link:hover { color: var(--accent); }
+.ms-link svg { width: 13px; height: 13px; }
+
+.panel-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--warn);
+}
+
+/* Vagas grid (compacto) */
+.vagas-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+.vaga-card {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.vaga-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.vaga-days {
+  font-size: 10px;
+  color: var(--text-faint);
+  line-height: 1.3;
+}
+.vaga-count {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  margin-top: 2px;
+}
+.vaga-count .cur { font-weight: 500; }
+.vaga-count.full .cur { color: var(--accent); }
+.vaga-count.has .cur { color: var(--ok); }
+.vaga-count .max { color: var(--text-faint); }
+.vaga-bar { height: 4px; background: var(--surface-3); border-radius: 3px; overflow: hidden; }
+.vaga-fill { height: 100%; border-radius: 3px; }
+.vaga-fill.full { background: var(--accent); }
+.vaga-fill.has { background: var(--ok); }
+
+@media (max-width: 900px) {
+  .money-strip { flex-wrap: wrap; gap: 16px; }
+  .ms-divider { display: none; }
+  .ms-item { flex: 1; min-width: 120px; }
+  .ms-link { width: 100%; margin-left: 0; justify-content: flex-start; margin-top: 4px; }
+  .vagas-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 520px) {
+  .hs-box input { font-size: 16px; }
+  .hs-box { padding: 14px 16px; }
+  .ms-value { font-size: 24px; }
+}
+
+/* ============================================================
+   DASHBOARD (legado v1 — mantido pros estilos de mini-list)
+   ============================================================ */
+.dash-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.metric {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 200ms var(--ease);
+}
+.metric:hover { border-color: var(--border-strong); }
+
+.metric-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 14px;
+}
+.metric-label svg { width: 14px; height: 14px; stroke-width: 1.5; color: var(--text-dim); }
+
+.metric-value {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 200;
+  font-size: 38px;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+.metric-value .unit { font-size: 18px; color: var(--text-dim); margin-right: 2px; }
+
+.metric-foot {
+  margin-top: 10px;
+  font-size: 11.5px;
+  color: var(--text-dim);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.metric-trend { font-family: 'JetBrains Mono', monospace; font-size: 10px; padding: 1px 6px; border-radius: 6px; font-weight: 500; }
+.metric-trend.up { color: var(--ok); background: var(--ok-soft); }
+.metric-trend.down { color: var(--alert); background: var(--alert-soft); }
+
+.metric.accent { background: linear-gradient(135deg, rgba(245,196,0,0.08), rgba(245,196,0,0.02)); border-color: var(--accent-line); }
+.metric.accent .metric-value { color: var(--accent); }
+.metric.accent .metric-label { color: var(--accent); }
+.metric.accent .metric-label svg { color: var(--accent); }
+
+/* Dashboard lower grid */
+.dash-cols {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.panel-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 400;
+  font-size: 15px;
+  color: var(--text);
+}
+.panel-link {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  transition: color 180ms var(--ease);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.panel-link:hover { color: var(--accent); }
+.panel-link svg { width: 12px; height: 12px; }
+
+/* Occupancy bars (turmas) */
+.occ-list { display: flex; flex-direction: column; gap: 14px; }
+.occ-row { display: flex; flex-direction: column; gap: 6px; }
+.occ-head { display: flex; align-items: center; justify-content: space-between; }
+.occ-name { font-size: 13px; color: var(--text); font-weight: 400; }
+.occ-time { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-faint); letter-spacing: 0.08em; }
+.occ-count { font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 500; }
+.occ-count .cur { color: var(--text); }
+.occ-count .max { color: var(--text-faint); }
+.occ-bar { height: 6px; background: var(--surface-3); border-radius: 4px; overflow: hidden; }
+.occ-fill { height: 100%; border-radius: 4px; transition: width 600ms var(--ease); }
+.occ-fill.low { background: var(--ok); }
+.occ-fill.mid { background: var(--warn); }
+.occ-fill.full { background: var(--accent); }
+
+/* Lists (vencimentos, aniversários) */
+.mini-list { display: flex; flex-direction: column; }
+.mini-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.mini-row:last-child { border-bottom: none; }
+.mini-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 500;
+  font-size: 12px;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+.mini-info { flex: 1; min-width: 0; }
+.mini-name { font-size: 13px; color: var(--text); font-weight: 400; }
+.mini-sub { font-size: 11px; color: var(--text-faint); margin-top: 1px; }
+.mini-action {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  transition: all 160ms var(--ease);
+  white-space: nowrap;
+}
+.mini-action:hover { border-color: var(--accent); color: var(--accent); }
+.mini-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.mini-tag.warn { color: var(--warn); background: var(--warn-soft); }
+.mini-tag.alert { color: var(--alert); background: var(--alert-soft); }
+.mini-tag.ok { color: var(--ok); background: var(--ok-soft); }
+
+/* Placeholder for non-built views */
+.view-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  text-align: center;
+  gap: 14px;
+}
+.vp-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-faint);
+}
+.vp-icon svg { width: 26px; height: 26px; stroke-width: 1.4; }
+.vp-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 300; font-size: 22px; color: var(--text); }
+.vp-text { font-size: 13px; color: var(--text-dim); max-width: 38ch; line-height: 1.5; }
+.vp-tag { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--accent); background: var(--accent-soft); padding: 4px 10px; border-radius: 999px; }
+
+/* ============================================================
+   MODAL AVALIAÇÃO FÍSICA — 3 passos
+   ============================================================ */
+.aval-nova-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px 14px;
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-line);
+  border-radius: var(--radius-sm);
+  color: var(--accent);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 160ms var(--ease);
+  margin-bottom: 16px;
+}
+.aval-nova-btn:hover { background: var(--accent); color: #000; }
+.aval-nova-btn svg { width: 15px; height: 15px; }
+
+/* Step indicators */
+.aval-steps {
+  display: flex;
+  align-items: center;
+  padding: 14px 28px;
+  gap: 0;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.aval-step-dot {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; font-weight: 500;
+  color: var(--text-faint);
+  flex-shrink: 0;
+  transition: all 220ms var(--ease);
+  background: var(--surface-2);
+}
+.aval-step-dot.active { background: var(--accent); color: #000; border-color: var(--accent); }
+.aval-step-dot.done { background: var(--ok-soft); color: var(--ok); border-color: var(--ok); }
+.aval-step-line { flex: 1; height: 1px; background: var(--border); }
+
+/* Modal steps */
+.aval-modal-step { display: none; flex-direction: column; }
+.aval-modal-step.active { display: flex; }
+
+/* IMC live */
+.aval-imc-live {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 14px;
+  transition: border-color 220ms var(--ease), background 220ms var(--ease);
+}
+.aval-imc-live.has-value { border-color: var(--accent-line); background: var(--accent-soft); }
+.aval-imc-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-faint); flex: 1;
+}
+.aval-imc-value {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 200; font-size: 34px; color: var(--text);
+  letter-spacing: -0.02em; line-height: 1;
+}
+.aval-imc-class {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 999px;
+  min-width: 110px; text-align: center;
+}
+.aval-imc-class.baixo { color: var(--warn); background: var(--warn-soft); }
+.aval-imc-class.normal { color: var(--ok); background: var(--ok-soft); }
+.aval-imc-class.sobrepeso { color: var(--warn); background: var(--warn-soft); }
+.aval-imc-class.obeso { color: var(--alert); background: var(--alert-soft); }
+
+/* Field hints (validação) */
+.aval-field-hint {
+  font-size: 11px;
+  min-height: 14px;
+  display: block;
+  margin-top: 3px;
+}
+.aval-field-hint.error { color: var(--alert); }
+.aval-field-hint.ok { color: var(--ok); }
+
+.novo-input.invalid { border-color: var(--alert) !important; box-shadow: 0 0 0 3px var(--alert-soft); }
+.novo-input.valid { border-color: var(--ok-soft); }
+
+/* Medidas grid 3 colunas */
+.aval-medidas-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+}
+
+/* Review (passo 3) */
+.aval-review {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.aval-review-section { display: flex; flex-direction: column; gap: 10px; }
+.aval-review-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-faint); padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+.aval-review-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+}
+.aval-review-item { display: flex; flex-direction: column; gap: 3px; }
+.aval-review-key {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint);
+}
+.aval-review-val { font-size: 15px; color: var(--text); font-weight: 400; }
+.aval-review-delta { font-family: 'JetBrains Mono', monospace; font-size: 10px; }
+.aval-review-delta.ok { color: var(--ok); }
+.aval-review-delta.warn { color: var(--warn); }
+
+@media (max-width: 600px) {
+  .aval-medidas-grid { grid-template-columns: 1fr 1fr; }
+  .aval-steps { padding: 12px 20px; }
+  .aval-imc-live { flex-wrap: wrap; gap: 8px; }
+  .aval-imc-value { font-size: 28px; }
+}
+
+/* ============================================================
+   MODAL NOVO ALUNO
+   ============================================================ */
+.novo-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 280ms var(--ease);
+}
+.novo-overlay.open { opacity: 1; pointer-events: auto; }
+.novo-modal {
+  background: var(--surface);
+  border: 1px solid var(--border-strong);
+  border-radius: 24px;
+  width: 100%; max-width: 620px; max-height: 88vh;
+  display: flex; flex-direction: column; overflow: hidden;
+  transform: translateY(12px);
+  transition: transform 320ms var(--ease);
+}
+.novo-overlay.open .novo-modal { transform: translateY(0); }
+.novo-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  padding: 24px 28px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.novo-eyebrow {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 6px;
+}
+.novo-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 300; font-size: 24px; color: var(--text); letter-spacing: -0.015em;
+}
+.novo-body {
+  flex: 1; overflow-y: auto; padding: 24px 28px;
+  display: flex; flex-direction: column; gap: 20px;
+}
+.novo-section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-faint); padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+.novo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.novo-field { display: flex; flex-direction: column; gap: 6px; }
+.novo-label { font-size: 12px; color: var(--text-dim); }
+.novo-required { color: var(--accent); }
+.novo-input, .novo-select, .novo-textarea {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  color: var(--text); font-size: 13.5px; font-family: inherit;
+  outline: none; transition: border-color 180ms var(--ease); width: 100%;
+  -webkit-appearance: none;
+}
+.novo-input:focus, .novo-select:focus, .novo-textarea:focus {
+  border-color: var(--accent-line); box-shadow: 0 0 0 3px var(--accent-soft);
+}
+.novo-input::placeholder, .novo-textarea::placeholder { color: var(--text-faint); }
+.novo-select { cursor: pointer; }
+.novo-select option { background: var(--surface-2); }
+.novo-textarea { resize: none; height: 90px; line-height: 1.5; }
+.novo-footer {
+  display: flex; align-items: center; justify-content: flex-end; gap: 10px;
+  padding: 18px 28px; border-top: 1px solid var(--border); flex-shrink: 0;
+}
+@media (max-width: 600px) {
+  .novo-grid { grid-template-columns: 1fr; }
+  .novo-modal { max-height: 95vh; border-radius: 20px 20px 0 0; }
+  .novo-overlay { align-items: flex-end; padding: 0; }
+  .novo-header, .novo-body { padding: 20px; }
+  .novo-footer { padding: 14px 20px; }
+}
+
+/* ============================================================
+   MÓDULO ALUNOS — lista + ficha
+   ============================================================ */
+.alunos-layout {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 16px;
+  height: calc(100vh - 64px - 56px);
+}
+
+.alunos-list-col {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.alc-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.alc-search svg { width: 16px; height: 16px; color: var(--text-faint); flex-shrink: 0; }
+.alc-search input {
+  background: none; border: none; outline: none;
+  color: var(--text); font-size: 14px; width: 100%;
+}
+.alc-search input::placeholder { color: var(--text-faint); }
+
+.alc-filters {
+  display: flex;
+  gap: 6px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+.alc-filter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  transition: all 160ms var(--ease);
+}
+.alc-filter:hover { border-color: var(--border-strong); color: var(--text); }
+.alc-filter.active { background: var(--accent); color: #000; border-color: var(--accent); }
+
+.alc-list { flex: 1; overflow-y: auto; padding: 8px; }
+
+.alc-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background 140ms var(--ease);
+  border: 1px solid transparent;
+  width: 100%;
+  text-align: left;
+}
+.alc-item:hover { background: var(--surface-2); }
+.alc-item.active { background: var(--accent-soft); border-color: var(--accent-line); }
+
+.alc-avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 500; font-size: 14px;
+  color: var(--text-dim);
+  flex-shrink: 0;
+  position: relative;
+}
+.alc-item.active .alc-avatar { color: var(--accent); }
+.alc-avatar.atrasado::after {
+  content: '';
+  position: absolute;
+  top: -1px; right: -1px;
+  width: 11px; height: 11px;
+  border-radius: 50%;
+  background: var(--alert);
+  border: 2px solid var(--surface);
+}
+.alc-info { flex: 1; min-width: 0; }
+.alc-name { font-size: 14px; color: var(--text); font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.alc-meta { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
+
+.aluno-ficha {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow-y: auto;
+  position: relative;
+}
+
+.ficha-empty {
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  height: 100%; gap: 14px; text-align: center;
+  color: var(--text-faint);
+}
+.ficha-empty svg { width: 40px; height: 40px; stroke-width: 1.2; opacity: 0.5; }
+.ficha-empty-text { font-size: 13px; max-width: 28ch; line-height: 1.5; }
+
+.ficha-back {
+  display: none;
+  align-items: center;
+  gap: 7px;
+  padding: 14px 20px;
+  font-size: 12.5px;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+  width: 100%;
+}
+.ficha-back svg { width: 15px; height: 15px; }
+
+.ficha-hero {
+  padding: 28px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.ficha-hero::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 280px; height: 100%;
+  background: radial-gradient(ellipse at top right, rgba(245,196,0,0.06), transparent 60%);
+  pointer-events: none;
+}
+.ficha-hero-top { display: flex; align-items: flex-start; gap: 18px; position: relative; }
+
+.ficha-avatar {
+  width: 72px; height: 72px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, var(--surface-3), var(--surface-2));
+  border: 1px solid var(--border-strong);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 300; font-size: 26px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.ficha-id { flex: 1; }
+.ficha-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 300;
+  font-size: 26px;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.ficha-tags { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.ficha-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 4px 10px; border-radius: 999px;
+}
+.ficha-status.ativo { color: var(--ok); background: var(--ok-soft); }
+.ficha-status.atrasado { color: var(--alert); background: var(--alert-soft); }
+.ficha-plan-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-dim); padding: 4px 10px;
+  border-radius: 999px; border: 1px solid var(--border);
+}
+
+.ficha-actions { display: flex; gap: 8px; margin-top: 20px; position: relative; flex-wrap: wrap; }
+.ficha-btn {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 9px 16px; border-radius: 999px;
+  font-size: 12.5px; font-weight: 500;
+  transition: all 160ms var(--ease);
+}
+.ficha-btn svg { width: 14px; height: 14px; stroke-width: 2; }
+.ficha-btn.primary { background: var(--accent); color: #000; }
+.ficha-btn.primary:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(245,196,0,0.22); }
+.ficha-btn.ghost { border: 1px solid var(--border-strong); color: var(--text-dim); }
+.ficha-btn.ghost:hover { border-color: var(--accent-line); color: var(--text); }
+
+.ficha-body { padding: 24px 28px; }
+
+.ficha-section { margin-bottom: 28px; }
+.ficha-section:last-child { margin-bottom: 0; }
+.ficha-section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.ficha-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 24px;
+}
+.ficha-field { display: flex; flex-direction: column; gap: 4px; }
+.ff-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-faint);
+}
+.ff-value { font-size: 14px; color: var(--text); font-weight: 400; }
+.ff-value.dim { color: var(--text-dim); }
+
+.ficha-timeline { display: flex; flex-direction: column; gap: 0; }
+.tl-item {
+  display: flex; gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--border);
+}
+.tl-item:last-child { border-bottom: none; }
+.tl-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent);
+  margin-top: 5px; flex-shrink: 0;
+}
+.tl-dot.dim { background: var(--text-faint); }
+.tl-content { flex: 1; }
+.tl-title { font-size: 13px; color: var(--text); }
+.tl-date { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-faint); margin-top: 2px; }
+
+@media (max-width: 900px) {
+  .alunos-layout { grid-template-columns: 1fr; height: auto; }
+  .aluno-ficha { display: none; }
+  .alunos-layout.showing-ficha .alunos-list-col { display: none; }
+  .alunos-layout.showing-ficha .aluno-ficha { display: block; }
+  .ficha-back { display: flex; }
+}
+
+/* ============================================================
+   MÓDULOS COMPARTILHADOS
+   ============================================================ */
+.mod-lede-wrap, .turmas-intro { margin-bottom: 22px; }
+.mod-lede {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-dim);
+  max-width: 64ch;
+}
+.mod-lede strong { color: var(--accent); font-weight: 500; }
+
+/* ============ TURMAS ============ */
+.turmas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+.turma-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 22px;
+  transition: border-color 200ms var(--ease);
+}
+.turma-card:hover { border-color: var(--border-strong); }
+.turma-card.lotada { border-color: var(--accent-line); }
+.turma-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.turma-time {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 300;
+  font-size: 26px;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.turma-days {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+  margin-top: 4px;
+}
+.turma-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 999px;
+}
+.turma-badge.has { color: var(--ok); background: var(--ok-soft); }
+.turma-badge.full { color: var(--accent); background: var(--accent-soft); }
+.turma-occ-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.turma-occ-count {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 200;
+  font-size: 30px;
+  color: var(--text);
+  letter-spacing: -0.02em;
+}
+.turma-occ-count .max { color: var(--text-faint); font-size: 18px; }
+.turma-occ-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--surface-3);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.turma-occ-fill { height: 100%; border-radius: 4px; }
+.turma-occ-fill.has { background: var(--ok); }
+.turma-occ-fill.full { background: var(--accent); }
+.turma-alunos {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+.turma-aluno-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 0;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: background 140ms var(--ease);
+}
+.turma-aluno-row:hover { background: var(--surface-2); padding-left: 6px; padding-right: 6px; }
+.turma-aluno-avatar {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 500; font-size: 10px;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+.turma-aluno-name { font-size: 13px; color: var(--text); }
+.turma-vaga-row {
+  display: flex; align-items: center; gap: 10px;
+  padding: 7px 0;
+  color: var(--text-faint);
+  font-size: 12px;
+  font-style: italic;
+}
+.turma-vaga-dash {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1px dashed var(--border-strong);
+  flex-shrink: 0;
+}
+
+/* ============ AGENDA ============ */
+.agenda-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.agenda-week-nav { display: flex; align-items: center; gap: 14px; }
+.awn-btn {
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-dim);
+  transition: all 160ms var(--ease);
+}
+.awn-btn:hover { border-color: var(--accent-line); color: var(--text); }
+.awn-btn svg { width: 16px; height: 16px; }
+.awn-label {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 400; font-size: 16px; color: var(--text);
+}
+.agenda-legend { display: flex; gap: 16px; }
+.aleg { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-dim); }
+.aleg-dot { width: 8px; height: 8px; border-radius: 50%; }
+.aleg-dot.sessao { background: var(--ok); }
+.aleg-dot.aval { background: var(--accent); }
+.agenda-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+.agenda-day {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  min-height: 200px;
+}
+.agenda-day-head {
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+}
+.agenda-day-name {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-dim);
+}
+.agenda-day-date {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 300; font-size: 18px; color: var(--text);
+  margin-top: 2px;
+}
+.agenda-day.today .agenda-day-date { color: var(--accent); }
+.agenda-slots { padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+.agenda-slot {
+  border-radius: 8px;
+  padding: 8px 10px;
+  border-left: 2px solid var(--ok);
+  background: var(--surface-2);
+}
+.agenda-slot.aval { border-left-color: var(--accent); }
+.agenda-slot-time {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--text); font-weight: 500;
+}
+.agenda-slot-info { font-size: 10px; color: var(--text-faint); margin-top: 2px; }
+
+/* ============ FINANCEIRO ============ */
+.fin-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.fin-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 20px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.fin-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-faint);
+}
+.fin-value {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 200; font-size: 28px; color: var(--text);
+  letter-spacing: -0.02em; line-height: 1;
+}
+.fin-unit { font-size: 15px; color: var(--text-dim); margin-right: 2px; }
+.fin-value.warn { color: var(--warn); }
+.fin-value.alert { color: var(--alert); }
+.fin-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  flex-shrink: 0;
+}
+.fin-tabs::-webkit-scrollbar { display: none; }
+.fin-tab {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 6px 12px; border-radius: 999px;
+  border: 1px solid var(--border);
+  transition: all 160ms var(--ease);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.fin-tab:hover { border-color: var(--border-strong); color: var(--text); }
+.fin-tab.active { background: var(--accent); color: #000; border-color: var(--accent); }
+.fin-table { display: flex; flex-direction: column; }
+.fin-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.2fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border);
+}
+.fin-row:last-child { border-bottom: none; }
+.fin-aluno { display: flex; align-items: center; gap: 12px; }
+.fin-aluno-name { font-size: 13.5px; color: var(--text); }
+.fin-plano { font-size: 12px; color: var(--text-dim); }
+.fin-valor { font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text); font-weight: 500; }
+.fin-venc { font-size: 12px; color: var(--text-dim); }
+.fin-status {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 4px 9px; border-radius: 999px; white-space: nowrap;
+}
+.fin-status.pago { color: var(--ok); background: var(--ok-soft); }
+.fin-status.pendente { color: var(--warn); background: var(--warn-soft); }
+.fin-status.vencido { color: var(--alert); background: var(--alert-soft); }
+.fin-action {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 0.06em; text-transform: uppercase;
+  padding: 7px 12px; border-radius: 999px;
+  border: 1px solid var(--border); color: var(--text-dim);
+  transition: all 160ms var(--ease); white-space: nowrap;
+}
+.fin-action:hover { border-color: var(--accent); color: var(--accent); }
+.fin-action.done { color: var(--ok); border-color: transparent; background: var(--ok-soft); }
+
+.fin-link-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--text-faint);
+  display: none;
+}
+.fin-aluno:hover .fin-link-hint { display: inline; color: var(--accent); }
+
+/* ============ PLANOS ============ */
+.planos-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+.plano-edit-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  position: relative;
+}
+.plano-edit-card.featured { border-color: var(--accent-line); background: linear-gradient(160deg, var(--accent-soft), transparent 60%); }
+.pec-tier {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-faint); margin-bottom: 8px;
+}
+.plano-edit-card.featured .pec-tier { color: var(--accent); }
+.pec-name {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 300; font-size: 24px; color: var(--text);
+  margin-bottom: 16px;
+}
+.pec-price-row { display: flex; align-items: baseline; gap: 4px; margin-bottom: 6px; }
+.pec-price {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 200; font-size: 38px; color: var(--text);
+  letter-spacing: -0.02em;
+}
+.pec-price .unit { font-size: 18px; color: var(--text-dim); }
+.pec-per { font-size: 12px; color: var(--text-faint); }
+.pec-detail { display: flex; flex-direction: column; gap: 10px; margin: 20px 0; padding-top: 18px; border-top: 1px solid var(--border); }
+.pec-detail-row { display: flex; justify-content: space-between; align-items: center; }
+.pec-dl { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-faint); }
+.pec-dv { font-size: 13px; color: var(--text); }
+.pec-active { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--ok); }
+.pec-edit-btn {
+  width: 100%;
+  padding: 11px;
+  border-radius: 999px;
+  border: 1px solid var(--border-strong);
+  color: var(--text-dim);
+  font-size: 12px; font-weight: 500;
+  transition: all 160ms var(--ease);
+}
+.pec-edit-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+/* ============ MENSAGENS ============ */
+.msg-groups { display: flex; flex-direction: column; gap: 16px; }
+.msg-group {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.msg-group-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--border);
+}
+.msg-group-icon {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+.msg-group-icon svg { width: 18px; height: 18px; stroke-width: 1.5; }
+.msg-group-title { font-size: 15px; color: var(--text); font-weight: 400; }
+.msg-group-sub { font-size: 11.5px; color: var(--text-faint); margin-top: 1px; }
+.msg-group-count {
+  margin-left: auto;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 5px 10px; border-radius: 999px; border: 1px solid var(--border);
+}
+.msg-list { padding: 8px; }
+.msg-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  transition: background 140ms var(--ease);
+}
+.msg-row:hover { background: var(--surface-2); }
+.msg-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 500; font-size: 12px; color: var(--text-dim);
+  flex-shrink: 0;
+}
+.msg-info { flex: 1; min-width: 0; }
+.msg-name { font-size: 13.5px; color: var(--text); }
+.msg-preview { font-size: 11.5px; color: var(--text-faint); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 52ch; }
+.msg-send {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 500;
+  padding: 8px 14px; border-radius: 999px;
+  background: var(--accent-soft); color: var(--accent);
+  border: 1px solid var(--accent-line);
+  transition: all 160ms var(--ease); white-space: nowrap;
+}
+.msg-send:hover { background: var(--accent); color: #000; }
+.msg-send svg { width: 13px; height: 13px; }
+
+/* ============ AVALIAÇÃO ============ */
+.aval-layout, .treinos-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  gap: 16px;
+  height: calc(100vh - 64px - 56px);
+}
+.aval-sidebar, .treinos-sidebar {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+  overflow-y: auto;
+}
+.aval-pick-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-faint); margin-bottom: 8px;
+}
+.aval-select {
+  width: 100%;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 11px 14px;
+  color: var(--text);
+  font-size: 13px;
+  outline: none;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+.aval-select:focus { border-color: var(--accent-line); }
+.aval-history { display: flex; flex-direction: column; gap: 8px; }
+.aval-hist-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--text-faint); margin-bottom: 4px;
+}
+.aval-hist-item {
+  padding: 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 140ms var(--ease);
+}
+.aval-hist-item:hover { border-color: var(--border-strong); }
+.aval-hist-item.active { border-color: var(--accent-line); background: var(--accent-soft); }
+.aval-edit-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 8.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-faint);
+  padding: 3px 8px; border-radius: 999px;
+  border: 1px solid var(--border);
+  transition: all 140ms var(--ease);
+}
+.aval-edit-btn:hover { border-color: var(--accent); color: var(--accent); }
+.aval-hist-date { font-size: 12.5px; color: var(--text); font-weight: 400; }
+.aval-hist-meta { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
+.aval-main, .treinos-main {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px;
+  overflow-y: auto;
+}
+.aval-main-head { margin-bottom: 24px; }
+.aval-main-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 300; font-size: 22px; color: var(--text);
+  margin-bottom: 4px;
+}
+.aval-main-date { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-faint); }
+.aval-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.aval-metric {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+}
+.aval-metric-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 9px; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-faint); margin-bottom: 8px;
+}
+.aval-metric-value {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 200; font-size: 28px; color: var(--text);
+  letter-spacing: -0.02em; line-height: 1;
+}
+.aval-metric-value .unit { font-size: 13px; color: var(--text-dim); }
+.aval-metric-delta { font-family: 'JetBrains Mono', monospace; font-size: 10px; margin-top: 6px; }
+.aval-metric-delta.down { color: var(--ok); }
+.aval-metric-delta.up { color: var(--warn); }
+.aval-section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-faint);
+  margin-bottom: 14px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.aval-measures { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.aval-measure { display: flex; flex-direction: column; gap: 4px; }
+.aval-measure-label { font-family: 'JetBrains Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-faint); }
+.aval-measure-value { font-size: 16px; color: var(--text); font-weight: 400; }
+.aval-measure-value .unit { font-size: 11px; color: var(--text-dim); }
+
+/* ============ TREINOS ============ */
+.treino-divisoes { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.treino-div-btn {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  width: 100%; text-align: left;
+  transition: all 140ms var(--ease);
+}
+.treino-div-btn:hover { border-color: var(--border-strong); }
+.treino-div-btn.active { border-color: var(--accent-line); background: var(--accent-soft); }
+.treino-div-letter {
+  width: 36px; height: 36px;
+  border-radius: 10px;
+  background: var(--surface-3);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 400; font-size: 16px; color: var(--text);
+  flex-shrink: 0;
+}
+.treino-div-btn.active .treino-div-letter { background: var(--accent); color: #000; }
+.treino-div-info { flex: 1; }
+.treino-div-name { font-size: 13px; color: var(--text); }
+.treino-div-count { font-size: 11px; color: var(--text-faint); margin-top: 1px; }
+.treino-main-head {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 22px;
+}
+.treino-main-title {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-weight: 300; font-size: 22px; color: var(--text);
+}
+.treino-ex-list { display: flex; flex-direction: column; gap: 10px; }
+.treino-ex {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+.treino-ex-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px; color: var(--text-faint);
+  width: 24px;
+}
+.treino-ex-name { font-size: 14px; color: var(--text); }
+.treino-ex-obs { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
+.treino-ex-sets {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px; color: var(--accent); font-weight: 500;
+  white-space: nowrap;
+}
+.treino-ex-rest { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-faint); white-space: nowrap; }
+
+@media (max-width: 900px) {
+  .aval-layout, .treinos-layout { grid-template-columns: 1fr; height: auto; }
+  .fin-strip { grid-template-columns: 1fr 1fr; }
+  .planos-cards { grid-template-columns: 1fr; }
+  .agenda-grid { grid-template-columns: 1fr; }
+  .aval-metrics { grid-template-columns: 1fr 1fr; }
+  .fin-row { grid-template-columns: 2fr 1fr auto; }
+  .fin-row .fin-plano, .fin-row .fin-venc { display: none; }
+}
+
+/* ============ RESPONSIVE ============ */
+.menu-toggle { display: none; }
+
+@media (max-width: 900px) {
+  :root { --sidebar-w: 0px; }
+  .app { grid-template-columns: 1fr; }
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 232px;
+    transform: translateX(-100%);
+    transition: transform 280ms var(--ease);
+  }
+  .sidebar.open { transform: translateX(0); }
+  .menu-toggle { display: flex; }
+  .search-box { display: none; }
+  .dash-grid { grid-template-columns: 1fr 1fr; }
+  .dash-cols { grid-template-columns: 1fr; }
+  .content { padding: 18px; }
+  .topbar { padding: 0 18px; }
+}
+
+@media (max-width: 520px) {
+  .dash-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .metric { padding: 16px; }
+  .metric-value { font-size: 30px; }
+  .topbar-title { font-size: 17px; }
+}
+
+.scrim {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 15;
+}
+.scrim.show { display: block; }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-logo-dot"></div>
+      <div>
+        <div class="sb-brand-name">BODYMIND</div>
+        <div class="sb-brand-sub">Painel · Studio</div>
+      </div>
+    </div>
+
+    <nav class="sb-nav">
+      <button class="sb-item active" data-view="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+        Dashboard
+      </button>
+      <button class="sb-item" data-view="alunos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c0-3.5 2.7-6 6-6s6 2.5 6 6"/><path d="M16 4a3.5 3.5 0 0 1 0 7M18 20c0-2.5-1-4.5-2.5-5.5"/></svg>
+        Alunos
+      </button>
+      <button class="sb-item" data-view="turmas">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="7" cy="8" r="2.5"/><circle cx="17" cy="8" r="2.5"/><circle cx="12" cy="15" r="2.5"/><path d="M3 19c0-2 1.5-3.5 4-3.5M21 19c0-2-1.5-3.5-4-3.5"/></svg>
+        Turmas
+      </button>
+      <button class="sb-item" data-view="agenda">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3.5" y="5" width="17" height="16" rx="2"/><line x1="3.5" y1="10" x2="20.5" y2="10"/><line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/></svg>
+        Agenda
+      </button>
+
+      <div class="sb-section-label">Gestão</div>
+      <button class="sb-item" data-view="financeiro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="6" width="18" height="13" rx="2"/><circle cx="12" cy="12.5" r="2.5"/><line x1="7" y1="10" x2="7" y2="15"/><line x1="17" y1="10" x2="17" y2="15"/></svg>
+        Financeiro
+        <span class="sb-item-badge">3</span>
+      </button>
+      <button class="sb-item" data-view="planos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="4" y="11" width="4" height="9" rx="1"/><rect x="10" y="6" width="4" height="14" rx="1"/><rect x="16" y="3" width="4" height="17" rx="1"/></svg>
+        Planos
+      </button>
+      <button class="sb-item" data-view="mensagens">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8A8.5 8.5 0 0 1 12.5 3a8.38 8.38 0 0 1 8.5 8.5z"/></svg>
+        Mensagens
+        <span class="sb-item-badge">5</span>
+      </button>
+
+      <div class="sb-section-label">Aluno</div>
+      <button class="sb-item" data-view="avaliacao">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        Avaliação física
+      </button>
+      <button class="sb-item" data-view="treinos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6.5 6.5h11M6.5 17.5h11M4 9v6M20 9v6M2 10.5v3M22 10.5v3"/></svg>
+        Treinos
+      </button>
+    </nav>
+
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-user-avatar">LF</div>
+        <div class="sb-user-info">
+          <span class="sb-user-name">Leomar Flores</span>
+          <span class="sb-user-role">Administrador</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="scrim" id="scrim"></div>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main">
+    <header class="topbar">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <button class="topbar-btn menu-toggle" id="menuToggle">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        </button>
+        <div class="topbar-left">
+          <span class="topbar-eyebrow" id="topEyebrow">BMD · Gestão</span>
+          <h1 class="topbar-title" id="topTitle">Dashboard</h1>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <div class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+          <input type="text" placeholder="Buscar aluno..." id="globalSearch">
+          <span class="search-kbd">⌘K</span>
+        </div>
+        <button class="topbar-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          <span class="dot"></span>
+        </button>
+        <button class="cta-primary" onclick="openNovoModal()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Novo aluno
+        </button>
+      </div>
+    </header>
+
+    <main class="content" id="content">
+
+      <!-- ============ DASHBOARD VIEW ============ -->
+      <section class="view active" id="view-dashboard">
+
+        <!-- Busca de aluno — protagonista -->
+        <div class="hero-search">
+          <div class="hs-label">Buscar aluno</div>
+          <div class="hs-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+            <input type="text" id="heroSearch" placeholder="Digite o nome do aluno..." autocomplete="off">
+            <span class="search-kbd">⌘K</span>
+          </div>
+          <div class="hs-results" id="hsResults"></div>
+          <div class="hs-quick">
+            <span class="hsq-label">Atalhos</span>
+            <button class="hsq-chip" onclick="window.navTo('alunos')">Ver todos os alunos</button>
+            <button class="hsq-chip" onclick="window.navTo('alunos')">+ Cadastrar novo</button>
+          </div>
+        </div>
+
+        <!-- Faixa de dinheiro -->
+        <div class="money-strip">
+          <div class="ms-item">
+            <span class="ms-label">Entrou esse mês</span>
+            <span class="ms-value"><span class="ms-unit">R$</span>5.766</span>
+          </div>
+          <div class="ms-divider"></div>
+          <div class="ms-item">
+            <span class="ms-label">Falta receber</span>
+            <span class="ms-value alert"><span class="ms-unit">R$</span>537</span>
+          </div>
+          <div class="ms-divider"></div>
+          <div class="ms-item">
+            <span class="ms-label">Alunos ativos</span>
+            <span class="ms-value"><span class="ms-num-accent">34</span></span>
+          </div>
+          <button class="ms-link" onclick="window.navTo('financeiro')">
+            Financeiro
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+        <!-- Cobranças do dia -->
+        <div class="panel" style="margin-bottom:14px;">
+          <div class="panel-head">
+            <span class="panel-title">Precisa de cobrança</span>
+            <span class="panel-count" id="cobrancaCount">3 pendentes</span>
+          </div>
+          <div class="mini-list" id="cobrancaList"></div>
+        </div>
+
+        <!-- Vagas nas turmas (compacto) -->
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Vagas nas turmas</span>
+            <button class="panel-link" onclick="window.navTo('turmas')">
+              Ver turmas
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+          <div class="vagas-grid" id="vagasGrid"></div>
+        </div>
+
+      </section>
+
+      <!-- ============ PLACEHOLDER VIEWS ============ -->
+      <section class="view" id="view-alunos">
+        <div class="alunos-layout">
+
+          <!-- Coluna esquerda: lista -->
+          <div class="alunos-list-col">
+            <div class="alc-search">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+              <input type="text" id="alunosSearch" placeholder="Buscar aluno...">
+            </div>
+            <div class="alc-filters" id="alcFilters">
+              <button class="alc-filter active" data-filter="todos">Todos</button>
+              <button class="alc-filter" data-filter="ativo">Ativos</button>
+              <button class="alc-filter" data-filter="atrasado">Atrasados</button>
+            </div>
+            <div class="alc-list" id="alcList"></div>
+          </div>
+
+          <!-- Coluna direita: ficha -->
+          <div class="aluno-ficha" id="alunoFicha"></div>
+
+        </div>
+      </section>
+      <section class="view" id="view-turmas">
+        <div class="turmas-intro">
+          <p class="mod-lede">Cada turma tem no máximo <strong>8 alunos</strong>. É o que garante atenção individual — o que diferencia o studio de uma academia comum.</p>
+        </div>
+        <div class="turmas-grid" id="turmasGrid"></div>
+      </section>
+      <section class="view" id="view-agenda">
+        <div class="agenda-head">
+          <div class="agenda-week-nav">
+            <button class="awn-btn" id="weekPrev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg></button>
+            <span class="awn-label" id="weekLabel">Esta semana</span>
+            <button class="awn-btn" id="weekNext"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
+          </div>
+          <div class="agenda-legend">
+            <span class="aleg"><span class="aleg-dot sessao"></span> Sessão</span>
+            <span class="aleg"><span class="aleg-dot aval"></span> Avaliação</span>
+          </div>
+        </div>
+        <div class="agenda-grid" id="agendaGrid"></div>
+      </section>
+      <section class="view" id="view-financeiro">
+        <div class="fin-strip">
+          <div class="fin-card">
+            <span class="fin-label">Recebido esse mês</span>
+            <span class="fin-value"><span class="fin-unit">R$</span>5.766</span>
+          </div>
+          <div class="fin-card">
+            <span class="fin-label">A receber</span>
+            <span class="fin-value warn"><span class="fin-unit">R$</span>1.253</span>
+          </div>
+          <div class="fin-card">
+            <span class="fin-label">Vencido</span>
+            <span class="fin-value alert"><span class="fin-unit">R$</span>537</span>
+          </div>
+          <div class="fin-card">
+            <span class="fin-label">Previsto (mês)</span>
+            <span class="fin-value"><span class="fin-unit">R$</span>6.140</span>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="panel-head">
+            <span class="panel-title">Mensalidades</span>
+            <div class="fin-tabs" id="finTabs">
+              <button class="fin-tab active" data-tab="todas">Todas</button>
+              <button class="fin-tab" data-tab="vencido">Vencidas</button>
+              <button class="fin-tab" data-tab="pendente">Pendentes</button>
+              <button class="fin-tab" data-tab="pago">Pagas</button>
+            </div>
+          </div>
+          <div class="fin-table" id="finTable"></div>
+        </div>
+      </section>
+      <section class="view" id="view-planos">
+        <div class="mod-lede-wrap">
+          <p class="mod-lede">Os planos do studio. A frequência semanal define em quantas turmas o aluno entra.</p>
+        </div>
+        <div class="planos-cards" id="planosCards"></div>
+      </section>
+      <section class="view" id="view-mensagens">
+        <div class="mod-lede-wrap">
+          <p class="mod-lede">Mensagens prontas pra disparar. O painel escreve, você confere e envia pelo WhatsApp num clique.</p>
+        </div>
+        <div class="msg-groups" id="msgGroups"></div>
+      </section>
+      <section class="view" id="view-avaliacao">
+        <div class="aval-layout">
+          <div class="aval-sidebar">
+            <div class="aval-pick-label">Aluno</div>
+            <select class="aval-select" id="avalSelect"></select>
+            <button class="aval-nova-btn" id="avalNovaBtn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Nova avaliação
+            </button>
+            <div class="aval-history" id="avalHistory"></div>
+          </div>
+          <div class="aval-main" id="avalMain"></div>
+        </div>
+      </section>
+
+<!-- ============ MODAL AVALIAÇÃO FÍSICA ============ -->
+<div class="novo-overlay" id="avalOverlay" aria-hidden="true">
+  <div class="novo-modal" style="max-width:580px;">
+    <div class="novo-header">
+      <div>
+        <div class="novo-eyebrow">BMD · Avaliação física</div>
+        <h2 class="novo-title" id="avalModalTitle">Nova avaliação</h2>
+      </div>
+      <button class="ao-close" id="avalOverlayClose">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Step indicators -->
+    <div class="aval-steps">
+      <div class="aval-step-dot active" data-step="1">1</div>
+      <div class="aval-step-line"></div>
+      <div class="aval-step-dot" data-step="2">2</div>
+      <div class="aval-step-line"></div>
+      <div class="aval-step-dot" data-step="3">3</div>
+    </div>
+
+    <!-- PASSO 1: Principais -->
+    <div class="aval-modal-step active" data-step="1">
+      <div class="novo-body">
+        <div class="novo-section-label">Passo 1 de 3 · Dados principais</div>
+        <div class="novo-grid">
+          <div class="novo-field">
+            <label class="novo-label">Data da avaliação</label>
+            <input class="novo-input" id="aval-data" type="text" placeholder="DD/MM/AAAA">
+          </div>
+          <div class="novo-field" style="grid-column: span 1;"></div>
+          <div class="novo-field">
+            <label class="novo-label">Peso (kg) <span class="novo-required">*</span></label>
+            <input class="novo-input" id="aval-peso" type="number" step="0.1" min="30" max="300" placeholder="Ex: 68.5">
+            <span class="aval-field-hint" id="aval-peso-hint"></span>
+          </div>
+          <div class="novo-field">
+            <label class="novo-label">Altura (m) <span class="novo-required">*</span></label>
+            <input class="novo-input" id="aval-altura" type="number" step="0.01" min="1.0" max="2.5" placeholder="Ex: 1.70">
+            <span class="aval-field-hint" id="aval-altura-hint"></span>
+          </div>
+        </div>
+
+        <!-- IMC calculado automaticamente -->
+        <div class="aval-imc-live" id="avalImcLive">
+          <div class="aval-imc-label">IMC calculado automaticamente</div>
+          <div class="aval-imc-value" id="avalImcValue">—</div>
+          <div class="aval-imc-class" id="avalImcClass"></div>
+        </div>
+
+        <div class="novo-grid" style="margin-top:16px;">
+          <div class="novo-field">
+            <label class="novo-label">% de gordura corporal</label>
+            <input class="novo-input" id="aval-gordura" type="number" step="0.1" min="2" max="70" placeholder="Ex: 22.5">
+            <span class="aval-field-hint" id="aval-gordura-hint"></span>
+          </div>
+          <div class="novo-field">
+            <label class="novo-label">Massa muscular (kg) — opcional</label>
+            <input class="novo-input" id="aval-massa" type="number" step="0.1" min="10" max="150" placeholder="Ex: 48.2">
+          </div>
+        </div>
+      </div>
+      <div class="novo-footer">
+        <button class="ficha-btn ghost" onclick="closeAvalModal()">Cancelar</button>
+        <button class="ficha-btn primary" id="avalStep1Next" onclick="avalNextStep(2)">
+          Próximo · Medidas
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- PASSO 2: Medidas corporais -->
+    <div class="aval-modal-step" data-step="2">
+      <div class="novo-body">
+        <div class="novo-section-label">Passo 2 de 3 · Medidas corporais (cm)</div>
+        <div class="aval-medidas-grid">
+          <div class="novo-field">
+            <label class="novo-label">Braço</label>
+            <input class="novo-input" id="aval-braco" type="number" step="0.5" placeholder="cm">
+          </div>
+          <div class="novo-field">
+            <label class="novo-label">Cintura</label>
+            <input class="novo-input" id="aval-cintura" type="number" step="0.5" placeholder="cm">
+          </div>
+          <div class="novo-field">
+            <label class="novo-label">Quadril</label>
+            <input class="novo-input" id="aval-quadril" type="number" step="0.5" placeholder="cm">
+          </div>
+          <div class="novo-field">
+            <label class="novo-label">Coxa</label>
+            <input class="novo-input" id="aval-coxa" type="number" step="0.5" placeholder="cm">
+          </div>
+          <div class="novo-field">
+            <label class="novo-label">Peito</label>
+            <input class="novo-input" id="aval-peito" type="number" step="0.5" placeholder="cm">
+          </div>
+          <div class="novo-field">
+            <label class="novo-label">Panturrilha</label>
+            <input class="novo-input" id="aval-panturrilha" type="number" step="0.5" placeholder="cm">
+          </div>
+        </div>
+        <div class="novo-field" style="margin-top:14px;">
+          <label class="novo-label">Observações da avaliação</label>
+          <textarea class="novo-textarea" id="aval-obs" placeholder="Ex: Boa evolução na composição corporal. Redução na cintura confirmada..."></textarea>
+        </div>
+      </div>
+      <div class="novo-footer">
+        <button class="ficha-btn ghost" onclick="avalNextStep(1)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 19l-7-7 7-7"/></svg>
+          Voltar
+        </button>
+        <button class="ficha-btn primary" onclick="avalNextStep(3)">
+          Revisar
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- PASSO 3: Confirmação + comparação -->
+    <div class="aval-modal-step" data-step="3">
+      <div class="novo-body">
+        <div class="novo-section-label">Passo 3 de 3 · Confirmar e salvar</div>
+        <div class="aval-review" id="avalReview"></div>
+      </div>
+      <div class="novo-footer">
+        <button class="ficha-btn ghost" onclick="avalNextStep(2)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 19l-7-7 7-7"/></svg>
+          Editar
+        </button>
+        <button class="ficha-btn primary" id="avalSaveBtn" onclick="salvarAvaliacao()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v14a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Salvar avaliação
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+      <section class="view" id="view-treinos">
+        <div class="treinos-layout">
+          <div class="treinos-sidebar">
+            <div class="aval-pick-label">Aluno</div>
+            <select class="aval-select" id="treinoSelect"></select>
+            <div class="treino-divisoes" id="treinoDivisoes"></div>
+          </div>
+          <div class="treinos-main" id="treinosMain"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<!-- ============ MODAL NOVO ALUNO ============ -->
+<div class="novo-overlay" id="novoOverlay" aria-hidden="true">
+  <div class="novo-modal">
+    <div class="novo-header">
+      <div>
+        <div class="novo-eyebrow">BMD · Cadastro</div>
+        <h2 class="novo-title">Novo aluno</h2>
+      </div>
+      <button class="ao-close" id="novoClose">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="novo-body">
+      <div class="novo-section-label">Dados pessoais</div>
+      <div class="novo-grid">
+        <div class="novo-field">
+          <label class="novo-label">Nome completo <span class="novo-required">*</span></label>
+          <input class="novo-input" type="text" placeholder="Ex: Marina Oliveira">
+        </div>
+        <div class="novo-field">
+          <label class="novo-label">Data de nascimento</label>
+          <input class="novo-input" type="text" placeholder="DD/MM/AAAA">
+        </div>
+        <div class="novo-field">
+          <label class="novo-label">Telefone / WhatsApp <span class="novo-required">*</span></label>
+          <input class="novo-input" type="text" placeholder="(48) 99999-9999">
+        </div>
+        <div class="novo-field">
+          <label class="novo-label">E-mail</label>
+          <input class="novo-input" type="email" placeholder="email@exemplo.com">
+        </div>
+      </div>
+
+      <div class="novo-section-label">Plano e turma</div>
+      <div class="novo-grid">
+        <div class="novo-field">
+          <label class="novo-label">Plano <span class="novo-required">*</span></label>
+          <select class="novo-select">
+            <option value="">Escolher plano...</option>
+            <option>Mensal · R$ 179/mês</option>
+            <option>Trimestral · R$ 169/mês</option>
+            <option>Semestral · R$ 159/mês</option>
+          </select>
+        </div>
+        <div class="novo-field">
+          <label class="novo-label">Turma fixa <span class="novo-required">*</span></label>
+          <select class="novo-select">
+            <option value="">Escolher turma...</option>
+            <option>Seg·Qua·Sex 07h (Lotada)</option>
+            <option>Seg·Qua·Sex 18h (2 vagas)</option>
+            <option>Ter·Qui 07h (3 vagas)</option>
+            <option>Ter·Qui 19h (1 vaga)</option>
+            <option>Sáb 09h (4 vagas)</option>
+          </select>
+        </div>
+        <div class="novo-field">
+          <label class="novo-label">Data de matrícula</label>
+          <input class="novo-input" type="text" placeholder="DD/MM/AAAA">
+        </div>
+        <div class="novo-field">
+          <label class="novo-label">Primeiro vencimento</label>
+          <input class="novo-input" type="text" placeholder="DD/MM/AAAA">
+        </div>
+      </div>
+
+      <div class="novo-section-label">Observações</div>
+      <textarea class="novo-textarea" placeholder="Objetivos, restrições, histórico de lesões..."></textarea>
+    </div>
+    <div class="novo-footer">
+      <button class="ficha-btn ghost" onclick="closeNovoModal()">Cancelar</button>
+      <button class="ficha-btn primary" onclick="salvarNovoAluno()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Cadastrar aluno
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // ============ DADOS FAKE (demo) ============
+  const alunos = [
+    { id: 1, nome: 'Carolina Mendes', plano: 'Trimestral', turma: 'Seg·Qua·Sex 07h', status: 'ativo',
+      tel: '(48) 99812-3344', email: 'carol.mendes@gmail.com', nasc: '14/03/1996', idade: 28,
+      matricula: '12/01/2025', vencimento: '12/04/2025', valor: 'R$ 169/mês', freq: '3x por semana',
+      obs: 'Foco em fortalecimento de core. Histórico de dor lombar leve.' },
+    { id: 2, nome: 'Rafael Santos', plano: 'Mensal', turma: 'Ter·Qui 19h', status: 'atrasado',
+      tel: '(48) 99765-1122', email: 'rafa.santos@hotmail.com', nasc: '22/07/1990', idade: 34,
+      matricula: '03/02/2025', vencimento: '03/03/2025', valor: 'R$ 179/mês', freq: '2x por semana',
+      obs: 'Lesão crônica no joelho direito. Trabalho de mobilidade e fortalecimento progressivo.' },
+    { id: 3, nome: 'Aline Borges', plano: 'Mensal', turma: 'Seg·Qua·Sex 18h', status: 'atrasado',
+      tel: '(48) 99634-7788', email: 'aline.borges@gmail.com', nasc: '08/11/1992', idade: 32,
+      matricula: '20/01/2025', vencimento: '20/02/2025', valor: 'R$ 179/mês', freq: '3x por semana',
+      obs: 'Pós-parto, retorno gradual. Acompanhamento via WhatsApp entre sessões.' },
+    { id: 4, nome: 'Pedro Henrique', plano: 'Semestral', turma: 'Ter·Qui 07h', status: 'ativo',
+      tel: '(48) 99523-9900', email: 'pedrohnr@gmail.com', nasc: '30/05/1988', idade: 36,
+      matricula: '05/12/2024', vencimento: '05/06/2025', valor: 'R$ 159/mês', freq: '2x por semana',
+      obs: 'Objetivo: condicionamento geral e perda de gordura.' },
+    { id: 5, nome: 'Juliana Costa', plano: 'Mensal', turma: 'Sáb 09h', status: 'ativo',
+      tel: '(48) 99445-2211', email: 'ju.costa@gmail.com', nasc: '17/09/1995', idade: 29,
+      matricula: '15/02/2025', vencimento: '15/03/2025', valor: 'R$ 179/mês', freq: '1x por semana',
+      obs: 'Treino de finais de semana. Prioriza mobilidade e alongamento.' },
+    { id: 6, nome: 'Marina Oliveira', plano: 'Trimestral', turma: 'Seg·Qua·Sex 07h', status: 'ativo',
+      tel: '(48) 99334-5566', email: 'marina.oli@gmail.com', nasc: '25/06/1997', idade: 28,
+      matricula: '10/01/2025', vencimento: '10/04/2025', valor: 'R$ 169/mês', freq: '3x por semana',
+      obs: 'Aniversário hoje. Treino voltado a hipertrofia de membros inferiores.' },
+    { id: 7, nome: 'Lucas Ferreira', plano: 'Mensal', turma: 'Ter·Qui 19h', status: 'ativo',
+      tel: '(48) 99223-8877', email: 'lucasferr@gmail.com', nasc: '12/04/1989', idade: 35,
+      matricula: '28/01/2025', vencimento: '28/03/2025', valor: 'R$ 179/mês', freq: '2x por semana',
+      obs: 'Retorno aos treinos depois de anos parado. Progressão cautelosa.' },
+    { id: 8, nome: 'Beatriz Lima', plano: 'Semestral', turma: 'Seg·Qua·Sex 18h', status: 'ativo',
+      tel: '(48) 99112-3344', email: 'bia.lima@gmail.com', nasc: '03/02/2000', idade: 24,
+      matricula: '08/12/2024', vencimento: '08/06/2025', valor: 'R$ 159/mês', freq: '3x por semana',
+      obs: 'Atleta amadora de corrida. Trabalho de força complementar.' },
+    { id: 9, nome: 'Gabriel Souza', plano: 'Trimestral', turma: 'Ter·Qui 07h', status: 'ativo',
+      tel: '(48) 99001-2233', email: 'gabsouza@gmail.com', nasc: '19/08/1993', idade: 31,
+      matricula: '24/03/2025', vencimento: '24/06/2025', valor: 'R$ 169/mês', freq: '2x por semana',
+      obs: 'Novo aluno. Avaliação inicial concluída.' },
+    { id: 10, nome: 'Fernanda Alves', plano: 'Mensal', turma: 'Sáb 09h', status: 'ativo',
+      tel: '(48) 98990-1122', email: 'fe.alves@gmail.com', nasc: '11/12/1991', idade: 33,
+      matricula: '22/03/2025', vencimento: '22/04/2025', valor: 'R$ 179/mês', freq: '1x por semana',
+      obs: 'Treino de sábado. Foco em bem-estar e consistência.' },
+    { id: 11, nome: 'Thiago Martins', plano: 'Semestral', turma: 'Seg·Qua·Sex 07h', status: 'ativo',
+      tel: '(48) 98876-5544', email: 'thiagomart@gmail.com', nasc: '07/10/1986', idade: 38,
+      matricula: '19/03/2025', vencimento: '19/09/2025', valor: 'R$ 159/mês', freq: '3x por semana',
+      obs: 'Objetivo: ganho de massa e melhora postural.' },
+    { id: 12, nome: 'Camila Rocha', plano: 'Mensal', turma: 'Ter·Qui 19h', status: 'ativo',
+      tel: '(48) 98765-4433', email: 'camila.rocha@gmail.com', nasc: '28/01/1994', idade: 31,
+      matricula: '21/03/2025', vencimento: '21/04/2025', valor: 'R$ 179/mês', freq: '2x por semana',
+      obs: 'Treino noturno. Foco em condicionamento cardiovascular.' },
+  ];
+
+  const turmas = [
+    { time: '07:00', dias: 'Seg · Qua · Sex', cur: 8, max: 8 },
+    { time: '18:00', dias: 'Seg · Qua · Sex', cur: 6, max: 8 },
+    { time: '07:00', dias: 'Ter · Qui', cur: 5, max: 8 },
+    { time: '19:00', dias: 'Ter · Qui', cur: 7, max: 8 },
+    { time: '09:00', dias: 'Sábado', cur: 4, max: 8 },
+  ];
+
+  const cobrancas = [
+    { nome: 'Rafael Santos', sub: 'Mensal · venceu há 2 dias · R$ 179', tag: 'alert', tagText: 'Atrasado' },
+    { nome: 'Aline Borges', sub: 'Mensal · venceu há 5 dias · R$ 179', tag: 'alert', tagText: 'Atrasado' },
+    { nome: 'Carolina Mendes', sub: 'Trimestral · vence amanhã · R$ 179', tag: 'warn', tagText: 'Amanhã' },
+  ];
+
+  function initials(name) {
+    return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
+  }
+
+  const statusLabel = {
+    ativo: { cls: 'ok', txt: 'Ativo' },
+    atrasado: { cls: 'alert', txt: 'Atrasado' },
+    cancelado: { cls: 'warn', txt: 'Cancelado' },
+  };
+
+  // ============ BUSCA DE ALUNO (protagonista) ============
+  const heroSearch = document.getElementById('heroSearch');
+  const hsResults = document.getElementById('hsResults');
+
+  function renderResults(query) {
+    const q = query.trim().toLowerCase();
+    if (!q) {
+      hsResults.classList.remove('show');
+      hsResults.innerHTML = '';
+      return;
+    }
+    const matches = alunos.filter(a => a.nome.toLowerCase().includes(q)).slice(0, 6);
+    if (matches.length === 0) {
+      hsResults.innerHTML = `<div style="padding:16px; text-align:center; color:var(--text-faint); font-size:13px;">Nenhum aluno encontrado pra "${query}"</div>`;
+      hsResults.classList.add('show');
+      return;
+    }
+    hsResults.innerHTML = matches.map(a => {
+      const st = statusLabel[a.status];
+      return `
+        <div class="hs-result" onclick="window.openAluno(${a.id})">
+          <div class="mini-avatar">${initials(a.nome)}</div>
+          <div class="mini-info">
+            <div class="mini-name">${a.nome}</div>
+            <div class="mini-sub">${a.plano} · ${a.turma}</div>
+          </div>
+          <span class="mini-tag ${st.cls}">${st.txt}</span>
+        </div>`;
+    }).join('');
+    hsResults.classList.add('show');
+  }
+
+  heroSearch.addEventListener('input', (e) => renderResults(e.target.value));
+
+  // ============ COBRANÇAS ============
+  const cobrancaList = document.getElementById('cobrancaList');
+  cobrancaList.innerHTML = cobrancas.map(c => `
+    <div class="mini-row">
+      <div class="mini-avatar">${initials(c.nome)}</div>
+      <div class="mini-info">
+        <div class="mini-name">${c.nome}</div>
+        <div class="mini-sub">${c.sub}</div>
+      </div>
+      <button class="mini-action">Cobrar no WhatsApp</button>
+    </div>`).join('');
+
+  // ============ VAGAS NAS TURMAS (compacto) ============
+  const vagasGrid = document.getElementById('vagasGrid');
+  vagasGrid.innerHTML = turmas.map(t => {
+    const pct = (t.cur / t.max) * 100;
+    const full = t.cur >= t.max;
+    const cls = full ? 'full' : 'has';
+    return `
+      <div class="vaga-card">
+        <span class="vaga-time">${t.time}</span>
+        <span class="vaga-days">${t.dias}</span>
+        <span class="vaga-count ${cls}"><span class="cur">${t.cur}</span><span class="max">/${t.max}</span> ${full ? 'lotada' : 'vagas'}</span>
+        <div class="vaga-bar"><div class="vaga-fill ${cls}" style="width:${pct}%"></div></div>
+      </div>`;
+  }).join('');
+
+  // ============================================================
+  // MÓDULO ALUNOS — lista + ficha
+  // ============================================================
+  const alcList = document.getElementById('alcList');
+  const alunoFicha = document.getElementById('alunoFicha');
+  const alunosSearch = document.getElementById('alunosSearch');
+  const alcFilters = document.getElementById('alcFilters');
+  const alunosLayout = document.querySelector('.alunos-layout');
+  let alunosFilter = 'todos';
+  let alunoAtivo = null;
+
+  function fichaVazia() {
+    return `
+      <div class="ficha-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.5-7 8-7s8 3 8 7"/></svg>
+        <div class="ficha-empty-text">Escolhe um aluno na lista pra ver a ficha completa.</div>
+      </div>`;
+  }
+
+  function renderAlunoFicha(aluno) {
+    const st = statusLabel[aluno.status];
+    const waNum = aluno.tel.replace(/\D/g, '');
+    alunoFicha.innerHTML = `
+      <button class="ficha-back" onclick="window.closeFicha()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 19l-7-7 7-7"/></svg>
+        Voltar pra lista
+      </button>
+      <div class="ficha-hero">
+        <div class="ficha-hero-top">
+          <div class="ficha-avatar">${initials(aluno.nome)}</div>
+          <div class="ficha-id">
+            <div class="ficha-name">${aluno.nome}</div>
+            <div class="ficha-tags">
+              <span class="ficha-status ${aluno.status}">${st.txt}</span>
+              <span class="ficha-plan-tag">${aluno.plano}</span>
+              <span class="ficha-plan-tag">${aluno.turma}</span>
+            </div>
+          </div>
+        </div>
+        <div class="ficha-actions">
+          <a class="ficha-btn primary" href="https://wa.me/55${waNum}" target="_blank">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8A8.5 8.5 0 0 1 12.5 3a8.38 8.38 0 0 1 8.5 8.5z"/></svg>
+            WhatsApp
+          </a>
+          <button class="ficha-btn ghost" onclick="window.navTo('avaliacao')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+            Avaliação
+          </button>
+          <button class="ficha-btn ghost" onclick="window.navTo('treinos')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M6.5 6.5h11M6.5 17.5h11M4 9v6M20 9v6"/></svg>
+            Treino
+          </button>
+          <button class="ficha-btn ghost">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Editar
+          </button>
+        </div>
+      </div>
+
+      <div class="ficha-body">
+        <div class="ficha-section">
+          <div class="ficha-section-label">Contato</div>
+          <div class="ficha-grid">
+            <div class="ficha-field"><span class="ff-label">Telefone</span><span class="ff-value">${aluno.tel}</span></div>
+            <div class="ficha-field"><span class="ff-label">E-mail</span><span class="ff-value">${aluno.email}</span></div>
+            <div class="ficha-field"><span class="ff-label">Nascimento</span><span class="ff-value">${aluno.nasc} <span class="ff-value dim">· ${aluno.idade} anos</span></span></div>
+          </div>
+        </div>
+
+        <div class="ficha-section">
+          <div class="ficha-section-label">Plano e frequência</div>
+          <div class="ficha-grid">
+            <div class="ficha-field"><span class="ff-label">Plano</span><span class="ff-value">${aluno.plano} · ${aluno.valor}</span></div>
+            <div class="ficha-field"><span class="ff-label">Frequência</span><span class="ff-value">${aluno.freq}</span></div>
+            <div class="ficha-field"><span class="ff-label">Turma fixa</span><span class="ff-value">${aluno.turma}</span></div>
+            <div class="ficha-field"><span class="ff-label">Matriculado em</span><span class="ff-value">${aluno.matricula}</span></div>
+            <div class="ficha-field"><span class="ff-label">Vencimento</span><span class="ff-value">${aluno.vencimento}</span></div>
+          </div>
+        </div>
+
+        <div class="ficha-section">
+          <div class="ficha-section-label">Observações do Leomar</div>
+          <div class="ff-value dim" style="line-height:1.55;">${aluno.obs}</div>
+        </div>
+
+        <div class="ficha-section">
+          <div class="ficha-section-label">Histórico</div>
+          <div class="ficha-timeline">
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-content">
+                <div class="tl-title">Última sessão concluída</div>
+                <div class="tl-date">Há 2 dias · ${aluno.turma}</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot dim"></div>
+              <div class="tl-content">
+                <div class="tl-title">Avaliação física registrada</div>
+                <div class="tl-date">Há 3 semanas</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot dim"></div>
+              <div class="tl-content">
+                <div class="tl-title">Matrícula no plano ${aluno.plano}</div>
+                <div class="tl-date">${aluno.matricula}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function renderAlunosList() {
+    const q = (alunosSearch?.value || '').trim().toLowerCase();
+    let filtered = alunos.filter(a => {
+      const matchQ = !q || a.nome.toLowerCase().includes(q);
+      const matchF = alunosFilter === 'todos' || a.status === alunosFilter;
+      return matchQ && matchF;
+    });
+
+    alcList.innerHTML = filtered.map(a => `
+      <button class="alc-item ${alunoAtivo === a.id ? 'active' : ''}" data-id="${a.id}">
+        <div class="alc-avatar ${a.status === 'atrasado' ? 'atrasado' : ''}">${initials(a.nome)}</div>
+        <div class="alc-info">
+          <div class="alc-name">${a.nome}</div>
+          <div class="alc-meta">${a.plano} · ${a.turma}</div>
+        </div>
+      </button>`).join('');
+
+    alcList.querySelectorAll('.alc-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const id = parseInt(item.dataset.id, 10);
+        selectAluno(id);
+      });
+    });
+  }
+
+  function selectAluno(id) {
+    alunoAtivo = id;
+    const aluno = alunos.find(a => a.id === id);
+    if (!aluno) return;
+    renderAlunoFicha(aluno);
+    renderAlunosList();
+    if (alunosLayout) alunosLayout.classList.add('showing-ficha');
+  }
+  window.selectAluno = selectAluno;
+
+  // Abre aluno específico (vindo da busca do dashboard)
+  window.openAluno = function(id) {
+    navTo('alunos');
+    selectAluno(id);
+  };
+
+  window.closeFicha = function() {
+    if (alunosLayout) alunosLayout.classList.remove('showing-ficha');
+    alunoAtivo = null;
+    renderAlunosList();
+  };
+
+  if (alunosSearch) {
+    alunosSearch.addEventListener('input', renderAlunosList);
+  }
+  if (alcFilters) {
+    alcFilters.querySelectorAll('.alc-filter').forEach(btn => {
+      btn.addEventListener('click', () => {
+        alcFilters.querySelectorAll('.alc-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        alunosFilter = btn.dataset.filter;
+        renderAlunosList();
+      });
+    });
+  }
+
+  alunoFicha.innerHTML = fichaVazia();
+  renderAlunosList();
+
+  // ============================================================
+  // MÓDULO TURMAS
+  // ============================================================
+  const turmasData = [
+    { time: '07:00', dias: 'Seg · Qua · Sex', alunos: ['Carolina Mendes','Marina Oliveira','Thiago Martins','Pedro Lima','Sofia Andrade','Bruno Castro','Helena Dias','Igor Nunes'] },
+    { time: '18:00', dias: 'Seg · Qua · Sex', alunos: ['Aline Borges','Beatriz Lima','Rodrigo Maia','Tânia Reis','Vitor Hugo','Paula Freitas'] },
+    { time: '07:00', dias: 'Ter · Qui', alunos: ['Pedro Henrique','Gabriel Souza','Larissa Melo','Otávio Pinto','Rita Campos'] },
+    { time: '19:00', dias: 'Ter · Qui', alunos: ['Rafael Santos','Lucas Ferreira','Camila Rocha','Diego Alves','Nara Lopes','Felipe Goes','Sandra Mota'] },
+    { time: '09:00', dias: 'Sábado', alunos: ['Juliana Costa','Fernanda Alves','Marcelo Vaz','Yara Souza'] },
+  ];
+
+  const turmasGrid = document.getElementById('turmasGrid');
+  if (turmasGrid) {
+    turmasGrid.innerHTML = turmasData.map(t => {
+      const cur = t.alunos.length;
+      const full = cur >= 8;
+      const cls = full ? 'full' : 'has';
+      const pct = (cur / 8) * 100;
+      const vagas = 8 - cur;
+      const alunosRows = t.alunos.map(nome => `
+        <div class="turma-aluno-row">
+          <div class="turma-aluno-avatar">${initials(nome)}</div>
+          <span class="turma-aluno-name">${nome}</span>
+        </div>`).join('');
+      const vagasRows = Array.from({length: vagas}).map(() => `
+        <div class="turma-vaga-row">
+          <div class="turma-vaga-dash"></div>
+          <span>Vaga aberta</span>
+        </div>`).join('');
+      return `
+        <div class="turma-card ${full ? 'lotada' : ''}">
+          <div class="turma-card-head">
+            <div>
+              <div class="turma-time">${t.time}</div>
+              <div class="turma-days">${t.dias}</div>
+            </div>
+            <span class="turma-badge ${cls}">${full ? 'Lotada' : vagas + (vagas === 1 ? ' vaga' : ' vagas')}</span>
+          </div>
+          <div class="turma-occ-row">
+            <span class="turma-occ-count">${cur}<span class="max">/8</span></span>
+            <div class="turma-occ-bar"><div class="turma-occ-fill ${cls}" style="width:${pct}%"></div></div>
+          </div>
+          <div class="turma-alunos">${alunosRows}${vagasRows}</div>
+        </div>`;
+    }).join('');
+  }
+
+  // ============================================================
+  // MÓDULO AGENDA
+  // ============================================================
+  const agendaData = [
+    { dia: 'Seg', data: 14, today: false, slots: [
+      { time: '07:00', info: 'Turma · 8 alunos', tipo: 'sessao' },
+      { time: '18:00', info: 'Turma · 6 alunos', tipo: 'sessao' },
+    ]},
+    { dia: 'Ter', data: 15, today: false, slots: [
+      { time: '07:00', info: 'Turma · 5 alunos', tipo: 'sessao' },
+      { time: '14:00', info: 'Gabriel Souza', tipo: 'aval' },
+      { time: '19:00', info: 'Turma · 7 alunos', tipo: 'sessao' },
+    ]},
+    { dia: 'Qua', data: 16, today: true, slots: [
+      { time: '07:00', info: 'Turma · 8 alunos', tipo: 'sessao' },
+      { time: '18:00', info: 'Turma · 6 alunos', tipo: 'sessao' },
+    ]},
+    { dia: 'Qui', data: 17, today: false, slots: [
+      { time: '07:00', info: 'Turma · 5 alunos', tipo: 'sessao' },
+      { time: '19:00', info: 'Avaliação · Fernanda', tipo: 'aval' },
+      { time: '19:00', info: 'Turma · 7 alunos', tipo: 'sessao' },
+    ]},
+    { dia: 'Sex', data: 18, today: false, slots: [
+      { time: '07:00', info: 'Turma · 8 alunos', tipo: 'sessao' },
+      { time: '18:00', info: 'Turma · 6 alunos', tipo: 'sessao' },
+    ]},
+    { dia: 'Sáb', data: 19, today: false, slots: [
+      { time: '09:00', info: 'Turma · 4 alunos', tipo: 'sessao' },
+    ]},
+  ];
+
+  const agendaGrid = document.getElementById('agendaGrid');
+  if (agendaGrid) {
+    agendaGrid.innerHTML = agendaData.map(d => {
+      const slots = d.slots.map(s => `
+        <div class="agenda-slot ${s.tipo === 'aval' ? 'aval' : ''}">
+          <div class="agenda-slot-time">${s.time}</div>
+          <div class="agenda-slot-info">${s.info}</div>
+        </div>`).join('');
+      return `
+        <div class="agenda-day ${d.today ? 'today' : ''}">
+          <div class="agenda-day-head">
+            <div class="agenda-day-name">${d.dia}</div>
+            <div class="agenda-day-date">${d.data}</div>
+          </div>
+          <div class="agenda-slots">${slots}</div>
+        </div>`;
+    }).join('');
+  }
+
+  // ============================================================
+  // MÓDULO FINANCEIRO
+  // ============================================================
+  const mensalidades = [
+    { nome: 'Carolina Mendes', plano: 'Trimestral', valor: 'R$ 169', venc: '12/04', status: 'pago' },
+    { nome: 'Rafael Santos', plano: 'Mensal', valor: 'R$ 179', venc: '03/03', status: 'vencido' },
+    { nome: 'Aline Borges', plano: 'Mensal', valor: 'R$ 179', venc: '20/02', status: 'vencido' },
+    { nome: 'Pedro Henrique', plano: 'Semestral', valor: 'R$ 159', venc: '05/06', status: 'pago' },
+    { nome: 'Juliana Costa', plano: 'Mensal', valor: 'R$ 179', venc: '15/03', status: 'pendente' },
+    { nome: 'Marina Oliveira', plano: 'Trimestral', valor: 'R$ 169', venc: '10/04', status: 'pago' },
+    { nome: 'Lucas Ferreira', plano: 'Mensal', valor: 'R$ 179', venc: '28/03', status: 'pendente' },
+    { nome: 'Beatriz Lima', plano: 'Semestral', valor: 'R$ 159', venc: '08/06', status: 'pago' },
+    { nome: 'Gabriel Souza', plano: 'Trimestral', valor: 'R$ 169', venc: '24/06', status: 'pago' },
+    { nome: 'Camila Rocha', plano: 'Mensal', valor: 'R$ 179', venc: '21/04', status: 'pendente' },
+  ];
+
+  const finTable = document.getElementById('finTable');
+  const finTabs = document.getElementById('finTabs');
+  let finFilter = 'todas';
+
+  function renderFin() {
+    const filtered = mensalidades.filter(m => finFilter === 'todas' || m.status === finFilter);
+    const statusTxt = { pago: 'Pago', pendente: 'Pendente', vencido: 'Vencido' };
+    finTable.innerHTML = filtered.map(m => {
+      // busca o id do aluno pelo nome pra abrir a ficha
+      const alunoObj = alunos.find(a => a.nome === m.nome);
+      const alunoId = alunoObj ? alunoObj.id : null;
+      const clickAttr = alunoId ? `style="cursor:pointer;" onclick="window.openAluno(${alunoId})"` : '';
+      return `
+      <div class="fin-row">
+        <div class="fin-aluno" ${clickAttr} title="Abrir ficha">
+          <div class="mini-avatar">${initials(m.nome)}</div>
+          <div>
+            <span class="fin-aluno-name">${m.nome}</span>
+            ${alunoId ? '<span class="fin-link-hint">Ver ficha →</span>' : ''}
+          </div>
+        </div>
+        <span class="fin-plano">${m.plano}</span>
+        <span class="fin-valor">${m.valor}</span>
+        <span class="fin-venc">vence ${m.venc}</span>
+        <div style="display:flex; align-items:center; gap:10px; justify-content:flex-end;">
+          <span class="fin-status ${m.status}">${statusTxt[m.status]}</span>
+          ${m.status === 'pago'
+            ? '<span class="fin-action done">✓ Recebido</span>'
+            : '<button class="fin-action" onclick="event.stopPropagation(); this.classList.add(\'done\'); this.textContent=\'✓ Recebido\'">Marcar recebido</button>'}
+        </div>
+      </div>`;
+    }).join('');
+  }
+  if (finTable) {
+    renderFin();
+    finTabs.querySelectorAll('.fin-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        finTabs.querySelectorAll('.fin-tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        finFilter = tab.dataset.tab;
+        renderFin();
+      });
+    });
+  }
+
+  // ============================================================
+  // MÓDULO PLANOS
+  // ============================================================
+  const planosData = [
+    { tier: 'Nível 01', nome: 'Mensal', preco: '179', freq: '2x por semana', dur: '1 mês', taxa: 'Sem fidelidade', ativos: 5, featured: false },
+    { tier: 'Nível 02 · mais escolhido', nome: 'Trimestral', preco: '169', freq: '3x por semana', dur: '3 meses', taxa: 'Economiza R$ 30', ativos: 4, featured: true },
+    { tier: 'Nível 03', nome: 'Semestral', preco: '159', freq: '3x por semana', dur: '6 meses', taxa: 'Economiza R$ 120', ativos: 3, featured: false },
+  ];
+
+  const planosCards = document.getElementById('planosCards');
+  if (planosCards) {
+    planosCards.innerHTML = planosData.map(p => `
+      <div class="plano-edit-card ${p.featured ? 'featured' : ''}">
+        <div class="pec-tier">${p.tier}</div>
+        <div class="pec-name">${p.nome}</div>
+        <div class="pec-price-row">
+          <span class="pec-price"><span class="unit">R$</span>${p.preco}</span>
+          <span class="pec-per">/mês</span>
+        </div>
+        <div class="pec-detail">
+          <div class="pec-detail-row"><span class="pec-dl">Frequência</span><span class="pec-dv">${p.freq}</span></div>
+          <div class="pec-detail-row"><span class="pec-dl">Duração</span><span class="pec-dv">${p.dur}</span></div>
+          <div class="pec-detail-row"><span class="pec-dl">Condição</span><span class="pec-dv">${p.taxa}</span></div>
+          <div class="pec-detail-row"><span class="pec-dl">Alunos ativos</span><span class="pec-active">${p.ativos} ativos</span></div>
+        </div>
+        <button class="pec-edit-btn">Editar plano</button>
+      </div>`).join('');
+  }
+
+  // ============================================================
+  // MÓDULO MENSAGENS
+  // ============================================================
+  const msgGroupsData = [
+    { tipo: 'vencimento', titulo: 'Vence amanhã', sub: 'Lembrete amigável de vencimento', icon: '<path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/>',
+      msgs: [{ nome: 'Carolina Mendes', preview: 'Oi Carol! Passando pra lembrar que sua mensalidade vence amanhã...' }] },
+    { tipo: 'atraso', titulo: 'Cobrança de atraso', sub: 'Mensalidade vencida', icon: '<circle cx="12" cy="12" r="9"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>',
+      msgs: [
+        { nome: 'Rafael Santos', preview: 'Oi Rafael! Vi aqui que a mensalidade de março ficou pendente...' },
+        { nome: 'Aline Borges', preview: 'Oi Aline! Tudo bem? Sua mensalidade está em aberto desde 20/02...' },
+      ] },
+    { tipo: 'falta', titulo: 'Sumiu há 7 dias', sub: 'Mensagem de incentivo pra quem faltou', icon: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
+      msgs: [{ nome: 'Lucas Ferreira', preview: 'E aí Lucas! Senti sua falta nos últimos treinos. Bora marcar...' }] },
+    { tipo: 'aniversario', titulo: 'Aniversariantes', sub: 'Parabéns do studio', icon: '<path d="M12 2l2 5 5 .5-4 3.5 1 5-4-2.5L8 16l1-5-4-3.5 5-.5z"/>',
+      msgs: [{ nome: 'Marina Oliveira', preview: 'Parabéns, Marina! 🎉 Que esse novo ano traga muita saúde e força...' }] },
+  ];
+
+  const msgGroups = document.getElementById('msgGroups');
+  if (msgGroups) {
+    msgGroups.innerHTML = msgGroupsData.map(g => `
+      <div class="msg-group">
+        <div class="msg-group-head">
+          <div class="msg-group-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">${g.icon}</svg>
+          </div>
+          <div>
+            <div class="msg-group-title">${g.titulo}</div>
+            <div class="msg-group-sub">${g.sub}</div>
+          </div>
+          <span class="msg-group-count">${g.msgs.length} ${g.msgs.length === 1 ? 'pessoa' : 'pessoas'}</span>
+        </div>
+        <div class="msg-list">
+          ${g.msgs.map(m => `
+            <div class="msg-row">
+              <div class="msg-avatar">${initials(m.nome)}</div>
+              <div class="msg-info">
+                <div class="msg-name">${m.nome}</div>
+                <div class="msg-preview">${m.preview}</div>
+              </div>
+              <button class="msg-send">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.5 8.5 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8A8.5 8.5 0 0 1 12.5 3a8.38 8.38 0 0 1 8.5 8.5z"/></svg>
+                Enviar
+              </button>
+            </div>`).join('')}
+        </div>
+      </div>`).join('');
+  }
+
+  // ============================================================
+  // MÓDULO AVALIAÇÃO FÍSICA
+  // ============================================================
+  const avaliacoes = {
+    'Carolina Mendes': [
+      { data: '15/03/2025', peso: '64.2', altura: '1.66', imc: '23.3', gordura: '24.1',
+        medidas: { braco: '29', cintura: '72', quadril: '98', coxa: '56', peito: '88', panturrilha: '35' },
+        deltas: { peso: '-1.8', gordura: '-2.3' } },
+      { data: '01/02/2025', peso: '66.0', altura: '1.66', imc: '23.9', gordura: '26.4',
+        medidas: { braco: '28', cintura: '75', quadril: '99', coxa: '55', peito: '89', panturrilha: '34' },
+        deltas: null },
+    ],
+    'Rafael Santos': [
+      { data: '10/03/2025', peso: '82.5', altura: '1.78', imc: '26.0', gordura: '18.2',
+        medidas: { braco: '38', cintura: '88', quadril: '102', coxa: '60', peito: '104', panturrilha: '39' },
+        deltas: { peso: '-2.5', gordura: '-1.8' } },
+    ],
+  };
+
+  const avalSelect = document.getElementById('avalSelect');
+  const avalHistory = document.getElementById('avalHistory');
+  const avalMain = document.getElementById('avalMain');
+
+  function renderAvalMain(aval) {
+    if (!aval) { avalMain.innerHTML = ''; return; }
+    const deltaHtml = (key, label) => {
+      if (!aval.deltas || !aval.deltas[key]) return '';
+      const val = aval.deltas[key];
+      const down = val.startsWith('-');
+      return `<div class="aval-metric-delta ${down ? 'down' : 'up'}">${down ? '↓' : '↑'} ${val.replace('-','')} desde a última</div>`;
+    };
+    avalMain.innerHTML = `
+      <div class="aval-main-head">
+        <div class="aval-main-title">Avaliação</div>
+        <div class="aval-main-date">${aval.data}</div>
+      </div>
+      <div class="aval-metrics">
+        <div class="aval-metric">
+          <div class="aval-metric-label">Peso</div>
+          <div class="aval-metric-value">${aval.peso}<span class="unit">kg</span></div>
+          ${deltaHtml('peso')}
+        </div>
+        <div class="aval-metric">
+          <div class="aval-metric-label">Altura</div>
+          <div class="aval-metric-value">${aval.altura}<span class="unit">m</span></div>
+        </div>
+        <div class="aval-metric">
+          <div class="aval-metric-label">IMC</div>
+          <div class="aval-metric-value">${aval.imc}</div>
+        </div>
+        <div class="aval-metric">
+          <div class="aval-metric-label">Gordura</div>
+          <div class="aval-metric-value">${aval.gordura}<span class="unit">%</span></div>
+          ${deltaHtml('gordura')}
+        </div>
+      </div>
+      <div class="aval-section-label">Medidas corporais (cm)</div>
+      <div class="aval-measures">
+        <div class="aval-measure"><span class="aval-measure-label">Braço</span><span class="aval-measure-value">${aval.medidas.braco}<span class="unit"> cm</span></span></div>
+        <div class="aval-measure"><span class="aval-measure-label">Cintura</span><span class="aval-measure-value">${aval.medidas.cintura}<span class="unit"> cm</span></span></div>
+        <div class="aval-measure"><span class="aval-measure-label">Quadril</span><span class="aval-measure-value">${aval.medidas.quadril}<span class="unit"> cm</span></span></div>
+        <div class="aval-measure"><span class="aval-measure-label">Coxa</span><span class="aval-measure-value">${aval.medidas.coxa}<span class="unit"> cm</span></span></div>
+        <div class="aval-measure"><span class="aval-measure-label">Peito</span><span class="aval-measure-value">${aval.medidas.peito}<span class="unit"> cm</span></span></div>
+        <div class="aval-measure"><span class="aval-measure-label">Panturrilha</span><span class="aval-measure-value">${aval.medidas.panturrilha}<span class="unit"> cm</span></span></div>
+      </div>`;
+  }
+
+  function renderAvalForAluno(nome) {
+    const hist = avaliacoes[nome] || [];
+    if (hist.length === 0) {
+      avalHistory.innerHTML = '<div class="aval-hist-label">Histórico</div><div style="font-size:12px; color:var(--text-faint); padding:8px 0;">Nenhuma avaliação registrada ainda.</div>';
+      avalMain.innerHTML = '<div class="ficha-empty" style="height:100%;"><div class="ficha-empty-text">Esse aluno ainda não tem avaliação. Clique em "Nova avaliação" pra registrar a primeira.</div></div>';
+      return;
+    }
+    avalHistory.innerHTML = '<div class="aval-hist-label">Histórico</div>' + hist.map((h, i) => `
+      <div class="aval-hist-item ${i === 0 ? 'active' : ''}" data-idx="${i}">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <div class="aval-hist-date">${h.data}</div>
+          <button class="aval-edit-btn" data-idx="${i}" onclick="event.stopPropagation(); openAvalModal(${i})">Editar</button>
+        </div>
+        <div class="aval-hist-meta">${h.peso}kg · ${h.gordura}% gordura</div>
+      </div>`).join('');
+    renderAvalMain(hist[0]);
+    avalHistory.querySelectorAll('.aval-hist-item').forEach(item => {
+      item.addEventListener('click', () => {
+        avalHistory.querySelectorAll('.aval-hist-item').forEach(x => x.classList.remove('active'));
+        item.classList.add('active');
+        renderAvalMain(hist[parseInt(item.dataset.idx, 10)]);
+      });
+    });
+  }
+
+  if (avalSelect) {
+    avalSelect.innerHTML = alunos.map(a => `<option value="${a.nome}">${a.nome}</option>`).join('');
+    avalSelect.addEventListener('change', () => renderAvalForAluno(avalSelect.value));
+    renderAvalForAluno(alunos[0].nome);
+  }
+
+  // ============================================================
+  // MÓDULO TREINOS
+  // ============================================================
+  const treinos = {
+    'Carolina Mendes': {
+      'A': { nome: 'Inferiores + Core', exs: [
+        { nome: 'Agachamento livre', sets: '4 x 10', rest: '90s', obs: 'Foco na profundidade' },
+        { nome: 'Leg press 45°', sets: '4 x 12', rest: '75s', obs: '' },
+        { nome: 'Cadeira extensora', sets: '3 x 15', rest: '60s', obs: '' },
+        { nome: 'Stiff', sets: '3 x 12', rest: '75s', obs: 'Posterior de coxa' },
+        { nome: 'Prancha abdominal', sets: '3 x 45s', rest: '45s', obs: '' },
+      ]},
+      'B': { nome: 'Superiores', exs: [
+        { nome: 'Supino reto', sets: '4 x 10', rest: '90s', obs: '' },
+        { nome: 'Puxada frontal', sets: '4 x 12', rest: '75s', obs: '' },
+        { nome: 'Desenvolvimento', sets: '3 x 12', rest: '75s', obs: 'Ombro' },
+        { nome: 'Rosca direta', sets: '3 x 12', rest: '60s', obs: '' },
+      ]},
+      'C': { nome: 'Full body funcional', exs: [
+        { nome: 'Kettlebell swing', sets: '4 x 15', rest: '60s', obs: '' },
+        { nome: 'Afundo caminhando', sets: '3 x 20', rest: '75s', obs: '10 cada perna' },
+        { nome: 'Remada baixa', sets: '4 x 12', rest: '75s', obs: '' },
+      ]},
+    },
+    'Rafael Santos': {
+      'A': { nome: 'Mobilidade + Joelho', exs: [
+        { nome: 'Mobilidade de quadril', sets: '3 x 10', rest: '45s', obs: 'Aquecimento articular' },
+        { nome: 'Agachamento na caixa', sets: '4 x 10', rest: '90s', obs: 'Respeitar amplitude do joelho' },
+        { nome: 'Cadeira flexora', sets: '3 x 15', rest: '60s', obs: 'Fortalecer posterior' },
+        { nome: 'Panturrilha em pé', sets: '4 x 20', rest: '45s', obs: '' },
+      ]},
+      'B': { nome: 'Superiores', exs: [
+        { nome: 'Supino inclinado', sets: '4 x 10', rest: '90s', obs: '' },
+        { nome: 'Remada curvada', sets: '4 x 12', rest: '75s', obs: '' },
+      ]},
+    },
+  };
+
+  const treinoSelect = document.getElementById('treinoSelect');
+  const treinoDivisoes = document.getElementById('treinoDivisoes');
+  const treinosMain = document.getElementById('treinosMain');
+
+  function renderTreinoDivisao(nome, letra) {
+    const t = treinos[nome];
+    if (!t || !t[letra]) { treinosMain.innerHTML = ''; return; }
+    const div = t[letra];
+    treinosMain.innerHTML = `
+      <div class="treino-main-head">
+        <div class="treino-main-title">Treino ${letra} · ${div.nome}</div>
+        <button class="ficha-btn ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Editar</button>
+      </div>
+      <div class="treino-ex-list">
+        ${div.exs.map((ex, i) => `
+          <div class="treino-ex">
+            <span class="treino-ex-num">${String(i+1).padStart(2,'0')}</span>
+            <div>
+              <div class="treino-ex-name">${ex.nome}</div>
+              ${ex.obs ? `<div class="treino-ex-obs">${ex.obs}</div>` : ''}
+            </div>
+            <span class="treino-ex-sets">${ex.sets}</span>
+            <span class="treino-ex-rest">${ex.rest}</span>
+          </div>`).join('')}
+      </div>`;
+  }
+
+  function renderTreinoForAluno(nome) {
+    const t = treinos[nome];
+    if (!t) {
+      treinoDivisoes.innerHTML = '<div style="font-size:12px; color:var(--text-faint); padding:8px 0;">Nenhum treino montado ainda.</div>';
+      treinosMain.innerHTML = '<div class="ficha-empty" style="height:100%;"><div class="ficha-empty-text">Esse aluno ainda não tem treino. Monte a primeira divisão.</div></div>';
+      return;
+    }
+    const letras = Object.keys(t);
+    treinoDivisoes.innerHTML = letras.map((l, i) => `
+      <button class="treino-div-btn ${i === 0 ? 'active' : ''}" data-letra="${l}">
+        <div class="treino-div-letter">${l}</div>
+        <div class="treino-div-info">
+          <div class="treino-div-name">${t[l].nome}</div>
+          <div class="treino-div-count">${t[l].exs.length} exercícios</div>
+        </div>
+      </button>`).join('');
+    renderTreinoDivisao(nome, letras[0]);
+    treinoDivisoes.querySelectorAll('.treino-div-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        treinoDivisoes.querySelectorAll('.treino-div-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderTreinoDivisao(nome, btn.dataset.letra);
+      });
+    });
+  }
+
+  if (treinoSelect) {
+    treinoSelect.innerHTML = alunos.map(a => `<option value="${a.nome}">${a.nome}</option>`).join('');
+    treinoSelect.addEventListener('change', () => renderTreinoForAluno(treinoSelect.value));
+    renderTreinoForAluno(alunos[0].nome);
+  }
+
+  // ============================================================
+  // MODAL AVALIAÇÃO FÍSICA
+  // ============================================================
+  const avalOverlay = document.getElementById('avalOverlay');
+  const avalNovaBtn = document.getElementById('avalNovaBtn');
+  let avalModalStep = 1;
+  let avalEditIdx = null;
+
+  function openAvalModal(editIdx = null) {
+    avalEditIdx = editIdx;
+    avalModalStep = 1;
+    const nomeSelecionado = avalSelect.value;
+    document.getElementById('avalModalTitle').textContent =
+      editIdx !== null ? 'Editar avaliação' : `Nova avaliação · ${nomeSelecionado.split(' ')[0]}`;
+
+    const hoje = new Date();
+    const dd = String(hoje.getDate()).padStart(2,'0');
+    const mm = String(hoje.getMonth()+1).padStart(2,'0');
+    const yyyy = hoje.getFullYear();
+
+    if (editIdx !== null) {
+      const a = avaliacoes[nomeSelecionado][editIdx];
+      document.getElementById('aval-data').value = a.data;
+      document.getElementById('aval-peso').value = a.peso;
+      document.getElementById('aval-altura').value = a.altura;
+      document.getElementById('aval-gordura').value = a.gordura;
+      document.getElementById('aval-massa').value = a.massa || '';
+      document.getElementById('aval-braco').value = a.medidas.braco || '';
+      document.getElementById('aval-cintura').value = a.medidas.cintura || '';
+      document.getElementById('aval-quadril').value = a.medidas.quadril || '';
+      document.getElementById('aval-coxa').value = a.medidas.coxa || '';
+      document.getElementById('aval-peito').value = a.medidas.peito || '';
+      document.getElementById('aval-panturrilha').value = a.medidas.panturrilha || '';
+      document.getElementById('aval-obs').value = a.obs || '';
+    } else {
+      document.getElementById('aval-data').value = `${dd}/${mm}/${yyyy}`;
+      ['aval-peso','aval-altura','aval-gordura','aval-massa',
+       'aval-braco','aval-cintura','aval-quadril','aval-coxa','aval-peito','aval-panturrilha','aval-obs']
+        .forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+    }
+
+    updateImcLive();
+    goToAvalStep(1);
+    avalOverlay.classList.add('open');
+    avalOverlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => document.getElementById('aval-peso')?.focus(), 320);
+  }
+  window.openAvalModal = openAvalModal;
+
+  function closeAvalModal() {
+    avalOverlay.classList.remove('open');
+    avalOverlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    document.querySelectorAll('.novo-input.invalid, .novo-input.valid').forEach(el => {
+      el.classList.remove('invalid','valid');
+    });
+    document.querySelectorAll('.aval-field-hint').forEach(el => { el.textContent = ''; el.className = 'aval-field-hint'; });
+  }
+  window.closeAvalModal = closeAvalModal;
+
+  document.getElementById('avalOverlayClose')?.addEventListener('click', closeAvalModal);
+  avalOverlay?.addEventListener('click', (e) => { if (e.target === avalOverlay) closeAvalModal(); });
+
+  if (avalNovaBtn) {
+    avalNovaBtn.addEventListener('click', (e) => { e.stopPropagation(); openAvalModal(null); });
+  }
+
+  function goToAvalStep(n) {
+    avalModalStep = n;
+    document.querySelectorAll('.aval-modal-step').forEach(s => s.classList.remove('active'));
+    document.querySelector(`.aval-modal-step[data-step="${n}"]`)?.classList.add('active');
+    document.querySelectorAll('.aval-step-dot').forEach(dot => {
+      const sn = parseInt(dot.dataset.step);
+      dot.classList.toggle('active', sn === n);
+      dot.classList.toggle('done', sn < n);
+    });
+    if (n === 3) buildAvalReview();
+  }
+
+  window.avalNextStep = function(n) {
+    if (n > avalModalStep && !validateAvalStep(avalModalStep)) return;
+    goToAvalStep(n);
+  };
+
+  function validateAvalStep(step) {
+    if (step === 1) {
+      const peso = parseFloat(document.getElementById('aval-peso').value);
+      const altura = parseFloat(document.getElementById('aval-altura').value);
+      let ok = true;
+      if (!peso || peso < 30 || peso > 300) {
+        const h = document.getElementById('aval-peso-hint');
+        document.getElementById('aval-peso').classList.add('invalid');
+        if (h) { h.textContent = 'Informe um peso entre 30 e 300kg'; h.className = 'aval-field-hint error'; }
+        ok = false;
+      } else {
+        document.getElementById('aval-peso').classList.remove('invalid');
+        document.getElementById('aval-peso').classList.add('valid');
+        const h = document.getElementById('aval-peso-hint');
+        if (h) { h.textContent = '✓'; h.className = 'aval-field-hint ok'; }
+      }
+      if (!altura || altura < 1.0 || altura > 2.5) {
+        const h = document.getElementById('aval-altura-hint');
+        document.getElementById('aval-altura').classList.add('invalid');
+        if (h) { h.textContent = 'Informe em metros (ex: 1.70)'; h.className = 'aval-field-hint error'; }
+        ok = false;
+      } else {
+        document.getElementById('aval-altura').classList.remove('invalid');
+        document.getElementById('aval-altura').classList.add('valid');
+        const h = document.getElementById('aval-altura-hint');
+        if (h) { h.textContent = '✓'; h.className = 'aval-field-hint ok'; }
+      }
+      if (!ok) document.getElementById('aval-peso').focus();
+      return ok;
+    }
+    return true;
+  }
+
+  function updateImcLive() {
+    const peso = parseFloat(document.getElementById('aval-peso')?.value);
+    const altura = parseFloat(document.getElementById('aval-altura')?.value);
+    const imcEl = document.getElementById('avalImcValue');
+    const classEl = document.getElementById('avalImcClass');
+    const container = document.getElementById('avalImcLive');
+    if (!imcEl) return;
+    if (peso > 0 && altura > 0) {
+      const imc = peso / (altura * altura);
+      imcEl.textContent = imc.toFixed(1);
+      container.classList.add('has-value');
+      let cls = '', txt = '';
+      if (imc < 18.5) { cls = 'baixo'; txt = 'Abaixo do peso'; }
+      else if (imc < 25) { cls = 'normal'; txt = 'Peso normal ✓'; }
+      else if (imc < 30) { cls = 'sobrepeso'; txt = 'Sobrepeso'; }
+      else { cls = 'obeso'; txt = 'Obesidade'; }
+      classEl.textContent = txt;
+      classEl.className = `aval-imc-class ${cls}`;
+    } else {
+      imcEl.textContent = '—';
+      classEl.textContent = '';
+      classEl.className = 'aval-imc-class';
+      container.classList.remove('has-value');
+    }
+  }
+
+  document.getElementById('aval-peso')?.addEventListener('input', updateImcLive);
+  document.getElementById('aval-altura')?.addEventListener('input', updateImcLive);
+
+  function buildAvalReview() {
+    const nome = avalSelect.value;
+    const hist = avaliacoes[nome] || [];
+    const prevIdx = avalEditIdx !== null ? avalEditIdx + 1 : 0;
+    const prev = hist[prevIdx] || null;
+    const peso = document.getElementById('aval-peso').value;
+    const altura = document.getElementById('aval-altura').value;
+    const gordura = document.getElementById('aval-gordura').value;
+    const imc = (peso && altura) ? (parseFloat(peso) / (parseFloat(altura) ** 2)).toFixed(1) : '—';
+    const data = document.getElementById('aval-data').value || 'Hoje';
+    const medidas = {
+      'Braço': document.getElementById('aval-braco').value,
+      'Cintura': document.getElementById('aval-cintura').value,
+      'Quadril': document.getElementById('aval-quadril').value,
+      'Coxa': document.getElementById('aval-coxa').value,
+      'Peito': document.getElementById('aval-peito').value,
+      'Panturrilha': document.getElementById('aval-panturrilha').value,
+    };
+    const obs = document.getElementById('aval-obs').value;
+
+    function deltaHtml(curr, prevVal, lowerIsBetter = true) {
+      if (!curr || !prevVal) return '';
+      const diff = (parseFloat(curr) - parseFloat(prevVal)).toFixed(1);
+      if (Math.abs(parseFloat(diff)) < 0.1) return '<span class="aval-review-delta ok">= sem alteração</span>';
+      const positive = parseFloat(diff) > 0;
+      const good = lowerIsBetter ? !positive : positive;
+      return `<span class="aval-review-delta ${good ? 'ok' : 'warn'}">${positive ? '↑' : '↓'} ${Math.abs(diff)} vs anterior</span>`;
+    }
+
+    document.getElementById('avalReview').innerHTML = `
+      <div class="aval-review-section">
+        <div class="aval-review-label">Composição · ${data}</div>
+        <div class="aval-review-grid">
+          <div class="aval-review-item"><span class="aval-review-key">Peso</span><span class="aval-review-val">${peso || '—'} kg</span>${deltaHtml(peso, prev?.peso, true)}</div>
+          <div class="aval-review-item"><span class="aval-review-key">Altura</span><span class="aval-review-val">${altura || '—'} m</span></div>
+          <div class="aval-review-item"><span class="aval-review-key">IMC</span><span class="aval-review-val">${imc}</span></div>
+          <div class="aval-review-item"><span class="aval-review-key">% Gordura</span><span class="aval-review-val">${gordura || '—'}%</span>${deltaHtml(gordura, prev?.gordura, true)}</div>
+        </div>
+      </div>
+      <div class="aval-review-section">
+        <div class="aval-review-label">Medidas corporais (cm)</div>
+        <div class="aval-review-grid" style="grid-template-columns:repeat(3,1fr);">
+          ${Object.entries(medidas).map(([k,v]) =>
+            `<div class="aval-review-item"><span class="aval-review-key">${k}</span><span class="aval-review-val">${v || '—'} cm</span></div>`
+          ).join('')}
+        </div>
+      </div>
+      ${obs ? `<div class="aval-review-section"><div class="aval-review-label">Observações</div><div class="ff-value dim" style="line-height:1.55;">${obs}</div></div>` : ''}
+      ${prev ? '<div style="font-size:11px; color:var(--text-faint); font-style:italic; padding-top:4px;">Comparando com avaliação de ' + prev.data + '</div>' : ''}
+    `;
+  }
+
+  function salvarAvaliacao() {
+    const nome = avalSelect.value;
+    if (!avaliacoes[nome]) avaliacoes[nome] = [];
+    const hist = avaliacoes[nome];
+    const peso = document.getElementById('aval-peso').value;
+    const altura = document.getElementById('aval-altura').value;
+    const imc = (peso && altura) ? (parseFloat(peso) / (parseFloat(altura) ** 2)).toFixed(1) : '';
+    const prevIdx = avalEditIdx !== null ? avalEditIdx + 1 : 0;
+    const prev = hist[prevIdx] || null;
+
+    const novaAval = {
+      data: document.getElementById('aval-data').value,
+      peso, altura, imc,
+      gordura: document.getElementById('aval-gordura').value,
+      massa: document.getElementById('aval-massa').value,
+      obs: document.getElementById('aval-obs').value,
+      medidas: {
+        braco: document.getElementById('aval-braco').value,
+        cintura: document.getElementById('aval-cintura').value,
+        quadril: document.getElementById('aval-quadril').value,
+        coxa: document.getElementById('aval-coxa').value,
+        peito: document.getElementById('aval-peito').value,
+        panturrilha: document.getElementById('aval-panturrilha').value,
+      },
+      deltas: null,
+    };
+
+    if (prev) {
+      novaAval.deltas = {};
+      const dp = (parseFloat(novaAval.peso) - parseFloat(prev.peso)).toFixed(1);
+      const dg = (parseFloat(novaAval.gordura) - parseFloat(prev.gordura)).toFixed(1);
+      if (Math.abs(dp) >= 0.1) novaAval.deltas.peso = dp;
+      if (Math.abs(dg) >= 0.1) novaAval.deltas.gordura = dg;
+      if (Object.keys(novaAval.deltas).length === 0) novaAval.deltas = null;
+    }
+
+    if (avalEditIdx !== null) hist[avalEditIdx] = novaAval;
+    else hist.unshift(novaAval);
+
+    const btn = document.getElementById('avalSaveBtn');
+    const origHtml = btn.innerHTML;
+    btn.textContent = '✓ Salvo!';
+    btn.style.background = 'var(--ok)';
+    setTimeout(() => {
+      closeAvalModal();
+      btn.innerHTML = origHtml;
+      btn.style.background = '';
+      renderAvalForAluno(nome);
+    }, 900);
+  }
+  window.salvarAvaliacao = salvarAvaliacao;
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && avalOverlay?.classList.contains('open')) closeAvalModal();
+  });
+
+  // ============ NAVEGAÇÃO ============
+  const viewMeta = {
+    dashboard:  { eyebrow: 'BMD · Gestão',   title: 'Dashboard' },
+    alunos:     { eyebrow: 'BMD · Cadastro',  title: 'Alunos' },
+    turmas:     { eyebrow: 'BMD · Operação',  title: 'Turmas' },
+    agenda:     { eyebrow: 'BMD · Operação',  title: 'Agenda' },
+    financeiro: { eyebrow: 'BMD · Gestão',    title: 'Financeiro' },
+    planos:     { eyebrow: 'BMD · Gestão',    title: 'Planos' },
+    mensagens:  { eyebrow: 'BMD · Gestão',    title: 'Mensagens' },
+    avaliacao:  { eyebrow: 'BMD · Aluno',     title: 'Avaliação física' },
+    treinos:    { eyebrow: 'BMD · Aluno',     title: 'Treinos' },
+  };
+
+  const placeholderText = {
+    alunos: 'Cadastro completo de alunos com ficha, foto, plano, turma e histórico.',
+    turmas: 'Visão das turmas fixas com ocupação de até 8 vagas e controle de presença.',
+    agenda: 'Avaliações marcadas pelo site e sessões da semana, organizadas por horário.',
+    financeiro: 'Mensalidades, recebimentos e atrasos. Marcar como recebido e gerar recibo.',
+    planos: 'Os três planos do studio: valor, frequência semanal e duração — editáveis.',
+    mensagens: 'Alertas de vencimento, atraso, falta e aniversário que geram a mensagem e abrem o WhatsApp.',
+    avaliacao: 'Peso, medidas, IMC, percentual de gordura e fotos de evolução com histórico.',
+    treinos: 'Montagem de treino A/B/C por aluno, com séries, repetições e observações.',
+  };
+
+  function buildPlaceholder(view) {
+    const el = document.getElementById(`view-${view}`);
+    if (el.dataset.built) return;
+    el.innerHTML = `
+      <div class="view-placeholder">
+        <div class="vp-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6M9 13h6M9 17h3"/></svg>
+        </div>
+        <div class="vp-title">${viewMeta[view].title}</div>
+        <div class="vp-text">${placeholderText[view] || ''}</div>
+        <div class="vp-tag">Em construção</div>
+      </div>`;
+    el.dataset.built = '1';
+  }
+
+  const sidebar = document.getElementById('sidebar');
+  const scrim = document.getElementById('scrim');
+
+  // Views que já têm conteúdo real (não usam placeholder)
+  const builtViews = ['dashboard', 'alunos', 'turmas', 'agenda', 'financeiro', 'planos', 'mensagens', 'avaliacao', 'treinos'];
+
+  function navTo(view) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+
+    if (!builtViews.includes(view)) buildPlaceholder(view);
+
+    document.getElementById(`view-${view}`).classList.add('active');
+    document.querySelector(`.sb-item[data-view="${view}"]`)?.classList.add('active');
+
+    document.getElementById('topEyebrow').textContent = viewMeta[view].eyebrow;
+    document.getElementById('topTitle').textContent = viewMeta[view].title;
+
+    // fecha sidebar mobile
+    sidebar.classList.remove('open');
+    scrim.classList.remove('show');
+    document.getElementById('content').scrollTop = 0;
+  }
+  window.navTo = navTo;
+
+  document.querySelectorAll('.sb-item').forEach(item => {
+    item.addEventListener('click', () => navTo(item.dataset.view));
+  });
+
+  // Mobile menu
+  document.getElementById('menuToggle').addEventListener('click', () => {
+    sidebar.classList.add('open');
+    scrim.classList.add('show');
+  });
+  scrim.addEventListener('click', () => {
+    sidebar.classList.remove('open');
+    scrim.classList.remove('show');
+  });
+
+  // ⌘K / Ctrl+K focar busca
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      const hero = document.getElementById('heroSearch');
+      const dashActive = document.getElementById('view-dashboard').classList.contains('active');
+      if (dashActive && hero) hero.focus();
+      else document.getElementById('globalSearch')?.focus();
+    }
+    if (e.key === 'Escape') closeNovoModal();
+  });
+
+  // ============================================================
+  // MODAL NOVO ALUNO
+  // ============================================================
+  const novoOverlay = document.getElementById('novoOverlay');
+
+  function openNovoModal() {
+    novoOverlay.classList.add('open');
+    novoOverlay.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    // Foca no primeiro campo com leve delay
+    setTimeout(() => novoOverlay.querySelector('.novo-input')?.focus(), 320);
+  }
+  window.openNovoModal = openNovoModal;
+
+  function closeNovoModal() {
+    novoOverlay.classList.remove('open');
+    novoOverlay.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+  }
+  window.closeNovoModal = closeNovoModal;
+
+  function salvarNovoAluno() {
+    const nome = novoOverlay.querySelector('input[type="text"]').value.trim();
+    if (!nome) {
+      novoOverlay.querySelector('.novo-input').style.borderColor = 'var(--alert)';
+      novoOverlay.querySelector('.novo-input').focus();
+      setTimeout(() => { novoOverlay.querySelector('.novo-input').style.borderColor = ''; }, 1500);
+      return;
+    }
+    // Demo: mostra confirmação e fecha
+    const btn = novoOverlay.querySelector('.ficha-btn.primary');
+    btn.textContent = '✓ Cadastrado!';
+    btn.style.background = 'var(--ok)';
+    setTimeout(() => {
+      closeNovoModal();
+      btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Cadastrar aluno';
+      btn.style.background = '';
+      // Limpa o form
+      novoOverlay.querySelectorAll('.novo-input, .novo-textarea').forEach(el => el.value = '');
+      novoOverlay.querySelectorAll('.novo-select').forEach(el => el.selectedIndex = 0);
+    }, 1200);
+  }
+  window.salvarNovoAluno = salvarNovoAluno;
+
+  // Fechar ao clicar fora
+  novoOverlay.addEventListener('click', (e) => {
+    if (e.target === novoOverlay) closeNovoModal();
+  });
+
+  // Conectar botões "Novo aluno" do topbar ao modal
+  document.querySelectorAll('[onclick*="navTo(\'alunos\')"]').forEach(btn => {
+    btn.setAttribute('onclick', 'event.stopPropagation(); openNovoModal()');
+  });
+  // Botão específico do topbar
+  const topbarCta = document.querySelector('.cta-primary');
+  if (topbarCta) topbarCta.setAttribute('onclick', 'openNovoModal()');
+
+})();
+</script>
+</body>
+</html>
